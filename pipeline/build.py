@@ -18,7 +18,7 @@ RAW = ROOT / "data" / "raw"
 OUT = ROOT / "data" / "site.json"
 API = "https://fantasy.premierleague.com/api/"
 LEAGUE_ID = 36352
-MANAGERS = {4785042: "Jim", 6216297: "Ash", 169793: "Haz", 418825: "Cal", 3550467: "Dez", 475671: "Jack"}
+MANAGERS = {4785042: "Jim", 6216297: "Ash", 169793: "Haz", 418825: "Cal", 3550467: "Dez", 475671: "Gear"}
 REFRESH = "--refresh" in sys.argv
 
 GOAL_PTS = {1: 6, 2: 6, 3: 5, 4: 4}
@@ -235,43 +235,6 @@ def main():
             "all": rows,
         }
 
-    # ---- sliding doors: the gameweek 1 team, never touched again ----
-    # Same XI, bench order and captain every week; auto-subs by FPL's formation rules; no chips, no hits.
-    MIN_OUTFIELD = {2: 3, 3: 2, 4: 1}
-
-    def ghost_points(pk, gw):
-        mins = lambda el: live[gw][el]["minutes"]
-        kind = {p["element"]: p["element_type"] for p in pk["picks"]}
-        xi = [p["element"] for p in pk["picks"] if p["position"] <= 11]
-        bench = [p["element"] for p in sorted(pk["picks"], key=lambda p: p["position"]) if p["position"] > 11]
-        team = [el for el in xi if mins(el) > 0]
-        gk_bench = [el for el in bench if kind[el] == 1]
-        if not any(kind[el] == 1 for el in team) and gk_bench and mins(gk_bench[0]) > 0:
-            team.append(gk_bench[0])
-        for el in bench:
-            outfield = [x for x in team if kind[x] != 1]
-            if kind[el] == 1 or mins(el) == 0 or len(outfield) >= 10:
-                continue
-            after = outfield + [el]
-            short = sum(max(0, need - sum(kind[x] == t for x in after)) for t, need in MIN_OUTFIELD.items())
-            if short <= 10 - len(after):
-                team.append(el)
-        cap = next(p["element"] for p in pk["picks"] if p["is_captain"])
-        vice = next(p["element"] for p in pk["picks"] if p["is_vice_captain"])
-        armband = cap if mins(cap) > 0 else vice if mins(vice) > 0 else None
-        return sum(pts(el, gw) for el in team) + (pts(armband, gw) if armband in team else 0)
-
-    sliding = {}
-    for e in MANAGERS:
-        pk1 = fetch(f"entry/{e}/event/{finished[0]}/picks/", f"picks_{e}_{finished[0]}")
-        rows = [{"gw": gw, "ghost": ghost_points(pk1, gw), "actual": net_gw[e][gw]} for gw in finished]
-        cap1 = next(p["element"] for p in pk1["picks"] if p["is_captain"])
-        sliding[MANAGERS[e]] = {
-            "ghost": sum(r["ghost"] for r in rows), "actual": season[e], "weeks": rows,
-            "captain": name(cap1), "xi": [name(p["element"]) for p in pk1["picks"] if p["position"] <= 11],
-            "ghost_wins": sum(r["ghost"] > r["actual"] for r in rows),
-        }
-
     # ---- transfer timing: sessions (transfers made within 20 minutes of each other) ----
     deadlines = {ev["id"]: ev["deadline_time"] for ev in bs["events"]}
     sessions = {}
@@ -326,6 +289,34 @@ def main():
             "same_week": [MANAGERS[j[0]] for j in js[1:] if j[1] == first[1]],
         })
     trends.sort(key=lambda t: -sum(f["head_start"] for f in t["followers"]))
+
+    # ---- transfer news: what actually came in and went out of each squad, gameweek by gameweek ----
+    # Net squad changes, so a wildcard reworked 30 times shows once. Outs pair with ins of the same position.
+    # Points are from that gameweek to now, for both, as in transfer regret.
+    since = lambda el, gw: sum(pts(el, g) for g in range(gw, latest + 1))
+    club = lambda el: teams[players[el]["team"]]["short_name"]
+    moves = {}
+    for e in MANAGERS:
+        rows, prev = [], set(squads[e][finished[0]]["all"])
+        for gw in finished[1:]:
+            sq = squads[e][gw]
+            if sq["chip"] == "freehit":
+                rows.append({"gw": gw, "chip": "freehit", "hits": sq["hits"], "pairs": []})
+                continue
+            now = set(sq["all"])
+            by_pos = lambda els: sorted(els, key=lambda el: (players[el]["element_type"], -players[el]["now_cost"]))
+            ins, outs = by_pos(now - prev), by_pos(prev - now)
+            if ins:
+                pairs = []
+                for o in outs:
+                    i = next(el for el in ins if players[el]["element_type"] == players[o]["element_type"])
+                    ins.remove(i)
+                    pairs.append({"in": name(i), "in_club": club(i), "out": name(o), "out_club": club(o),
+                                  "pos": players[i]["element_type"], "pts_in": since(i, gw), "pts_out": since(o, gw),
+                                  "gw_in": pts(i, gw), "time": t_time.get((e, i, gw), "")})
+                rows.append({"gw": gw, "chip": sq["chip"], "hits": sq["hits"], "pairs": pairs})
+            prev = now
+        moves[MANAGERS[e]] = rows
 
     # ---- head to head ----
     h2h = {}
@@ -439,8 +430,8 @@ def main():
                  "season": "2026/27", "caveat_ownership": "Differentials use today's global ownership, not per-gameweek."},
         "table": table, "race": race, "gw_winners": gw_winners, "awards": awards, "luck": luck_out,
         "transfers": transfers, "jsn": jsn, "h2h": h2h, "weeks": weeks, "signature": signature, "checks": checks,
-        "sliding": sliding, "sessions": sessions, "deadlines": {gw: deadlines[gw] for gw in finished + ([nxt] if nxt else [])},
-        "trends": trends,
+        "sessions": sessions, "deadlines": {gw: deadlines[gw] for gw in finished + ([nxt] if nxt else [])},
+        "trends": trends, "moves": moves,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")

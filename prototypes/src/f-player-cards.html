@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Archivo:wdth,wght@100,400..800&display=swap" rel="stylesheet">
 <style>
 :root{--paper:#F1F4F2;--ink:#14281E;--muted:#587064;--line:#D3E0D8;--card:#fff;--pitch:#0B7A47;
---Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Jack:#D6347F}
+--Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Gear:#D6347F}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.45 Archivo,system-ui,sans-serif}
 .wrap{max-width:1080px;margin:0 auto;padding:0 16px}
@@ -73,7 +73,7 @@ const D = __DATA__;
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
-const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+const NAMES = ['Jim','Ash','Haz','Cal','Dez','Gear'];
 const M = Object.fromEntries(D.table.map(r => [r.manager, r]));
 $('#gw').textContent = D.meta.latest_gw;
 

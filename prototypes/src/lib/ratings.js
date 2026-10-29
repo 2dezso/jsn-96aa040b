@@ -3,7 +3,7 @@
 window.JSNRatings = (() => {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
-  const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+  const NAMES = ['Jim','Ash','Haz','Cal','Dez','Gear'];
   const ordinal = k => k + (['th','st','nd','rd'][(k % 100 - 20) % 10] || ['th','st','nd','rd'][k % 100] || 'th');
 
   function compute(D) {

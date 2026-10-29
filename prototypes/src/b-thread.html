@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#F1EEFF;--ink:#241B4B;--muted:#6C6490;--card:#FFFFFF;--line:#E2DDF7;--bot:#4B2FE0;
---Jim:#FF6B5A;--Ash:#7B5CFF;--Haz:#00A79B;--Cal:#F5A400;--Dez:#2E8BFF;--Jack:#F0509A}
+--Jim:#FF6B5A;--Ash:#7B5CFF;--Haz:#00A79B;--Cal:#F5A400;--Dez:#2E8BFF;--Gear:#F0509A}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.4 'Bricolage Grotesque',system-ui,sans-serif}
 .app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
@@ -67,7 +67,7 @@ const rv = (a, v) => a.key === 'template' ? v.toFixed(1) + '%' : a.key === 'miln
 const msg = (id, html, cls = '') => `<div class="msg" id="${id}"><span class="bot">JSN</span><div class="bubble ${cls}">${html}</div></div>`;
 const bars = (rows, max, fmt, colorFn) => rows.map(r => `<div class="r"><span class="who" style="color:${col(r.manager)}">${r.manager}</span><span class="b"><i style="width:${Math.max(3, Math.abs(r.value) / max * 100)}%;background:${colorFn(r)}"></i></span><span>${fmt(r.value)}</span></div>`).join('');
 
-$('#dots').innerHTML = ['Jim','Ash','Haz','Cal','Dez','Jack'].map(n => `<i style="background:${col(n)}">${n[0]}</i>`).join('');
+$('#dots').innerHTML = ['Jim','Ash','Haz','Cal','Dez','Gear'].map(n => `<i style="background:${col(n)}">${n[0]}</i>`).join('');
 const T = D.table, lead = T[0], gap = lead.points - T[1].points;
 const icon = {milner:'🏅',differential:'👑',lucky:'🍀',unlucky:'💀',captain:'🎯',regret:'🤡',bench:'🪑',template:'🐑'};
 let h = `<div class="day">Gameweek ${D.meta.latest_gw} is in</div>`;

@@ -3,7 +3,7 @@
 window.JSNStories = (() => {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
-  const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+  const NAMES = ['Jim','Ash','Haz','Cal','Dez','Gear'];
   const list = a => a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a.slice(-1);
   const C = n => `var(--${n})`;
 

@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
 <style>
 :root{--paper:#F7FAF8;--ink:#14281E;--muted:#587064;--pitch:#0B7A47;--card:#FFFFFF;--line:#D6E6DC;--wash:#EAF3ED;--out:#C8321F;--doubt:#B7790A;
---Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Jack:#D6347F}
+--Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Gear:#D6347F}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.45 Archivo,system-ui,sans-serif}
 .shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
@@ -108,7 +108,7 @@ const D = __DATA__;
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
-const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+const NAMES = ['Jim','Ash','Haz','Cal','Dez','Gear'];
 const col = n => `var(--${n})`;
 const sw = n => `<i class="sw" style="background:${col(n)}"></i>`;
 const chip = n => `<span>${sw(n)}${n}</span>`;

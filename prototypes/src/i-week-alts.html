@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
 <style>
 :root{--paper:#F7FAF8;--ink:#14281E;--muted:#587064;--pitch:#0B7A47;--card:#FFFFFF;--line:#D6E6DC;--wash:#EAF3ED;--out:#C8321F;
---Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Jack:#D6347F}
+--Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Gear:#D6347F}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.45 Archivo,system-ui,sans-serif}
 main{max-width:760px;margin:0 auto;padding:20px 16px 60px}
@@ -70,7 +70,7 @@ const D = __DATA__;
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const minus = n => n < 0 ? '−' + -n : n;
-const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+const NAMES = ['Jim','Ash','Haz','Cal','Dez','Gear'];
 const col = n => `var(--${n})`;
 const sw = n => `<i class="sw" style="background:${col(n)}"></i>`;
 const list = a => a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a.slice(-1);
