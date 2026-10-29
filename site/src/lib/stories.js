@@ -1,4 +1,4 @@
-// Gameweek stories: shared by the standalone page and the app overlay.
+// Gameweek stories: shared by the standalone page and the This week tab.
 // JSNStories.build(D) returns the slides; JSNStories.mount(root, D, opts) renders a player into root.
 window.JSNStories = (() => {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -54,24 +54,46 @@ window.JSNStories = (() => {
     const S = build(D), GW = D.meta.latest_gw;
     let i = Math.min(S.length - 1, Math.max(0, (opts.start || 1) - 1));
     root.classList.add('stories');
-    root.innerHTML = `<div class="st-stage"><div class="st-bars" aria-hidden="true">${S.map(() => '<i></i>').join('')}</div><div class="st-slot" aria-live="polite"></div><div class="st-nav"><button class="st-prev">Previous</button><span class="st-count"></span><button class="st-next">Next</button></div></div>`;
-    const q = s => root.querySelector(s);
+    // opts.autoplay = ms per slide; loops, pauses on hover, when hidden, or with the Pause button. Slides swap
+    // without animating, so it runs under reduced motion too.
+    const dur = opts.autoplay || 0, canPlay = dur > 0;
+    let playing = canPlay, hover = false, elapsed = 0, last = null;
+    root.innerHTML = `<div class="st-stage"><div class="st-bars" aria-hidden="true">${S.map(() => '<i><b></b></i>').join('')}</div><div class="st-slot" aria-live="${canPlay ? 'off' : 'polite'}"></div><div class="st-nav"><button class="st-prev">Previous</button><span class="st-count"></span>${canPlay ? '<button class="st-play">Pause</button>' : ''}<button class="st-next">Next</button></div></div>`;
+    const q = s => root.querySelector(s), fills = [...root.querySelectorAll('.st-bars b')];
     function render() {
       const s = S[i];
       q('.st-slot').innerHTML = `<div class="st-slide${s.light ? ' st-light' : ''}" style="--bg:${s.bg}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${S.length}">${s.inner}<div class="st-foot"><b>JSN</b><span>Jim Sport News, gameweek ${GW}</span></div><span class="st-zone"></span></div>`;
-      root.querySelectorAll('.st-bars i').forEach((b, k) => b.classList.toggle('on', k <= i));
+      elapsed = 0;
+      fills.forEach((b, k) => { b.style.transform = `scaleX(${k < i ? 1 : 0})`; });
       q('.st-count').textContent = `${i + 1} of ${S.length}`;
       q('.st-prev').disabled = i === 0;
-      q('.st-next').disabled = i === S.length - 1;
+      q('.st-next').disabled = i === S.length - 1 && !playing;
       if (opts.onChange) opts.onChange(i + 1);
     }
     const go = d => { i = Math.min(S.length - 1, Math.max(0, i + d)); render(); };
-    q('.st-slot').addEventListener('click', e => go(e.target.closest('.st-zone') ? -1 : 1));
+    if (canPlay) {
+      const active = () => !document.hidden && !hover && (!opts.isActive || opts.isActive());
+      // a plain timer, not animation frames: those get throttled or stopped in some browsers
+      setInterval(() => {
+        const t = performance.now();
+        if (playing && active()) {
+          if (last !== null) elapsed += t - last;
+          last = t;
+          if (elapsed >= dur) { i = (i + 1) % S.length; render(); }
+          fills[i].style.transform = `scaleX(${Math.min(1, elapsed / dur)})`;
+        } else last = null;
+      }, 100);
+      q('.st-slot').addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hover = true; });
+      q('.st-slot').addEventListener('pointerleave', () => { hover = false; });
+      q('.st-play').addEventListener('click', e => { playing = !playing; e.target.textContent = playing ? 'Pause' : 'Play'; q('.st-next').disabled = i === S.length - 1 && !playing; });
+    }
+    const next = () => (playing && i === S.length - 1 ? (i = 0, render()) : go(1));
+    q('.st-slot').addEventListener('click', e => (e.target.closest('.st-zone') ? go(-1) : next()));
     q('.st-prev').addEventListener('click', () => go(-1));
-    q('.st-next').addEventListener('click', () => go(1));
+    q('.st-next').addEventListener('click', next);
     document.addEventListener('keydown', e => {
       if (opts.isActive && !opts.isActive()) return;
-      if (e.key === 'ArrowRight') go(1);
+      if (e.key === 'ArrowRight') next();
       if (e.key === 'ArrowLeft') go(-1);
     });
     render();

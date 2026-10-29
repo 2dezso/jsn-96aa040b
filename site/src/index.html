@@ -45,33 +45,12 @@ h2{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:-.015em;margi
 .g2{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
 .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
 
-/* story launcher */
-.launch{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;width:100%;background:var(--pitch);color:#fff;border-radius:12px;padding:14px 16px;margin-top:18px}
-.launch:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-.launch .thumbs{display:flex;gap:4px}
-.launch .thumbs i{width:22px;height:28px;border-radius:4px;border:1.5px solid rgba(255,255,255,.7)}
-.launch strong{display:block;font-family:Unbounded,sans-serif;font-weight:900;font-size:17px;line-height:1.15}
-.launch small{display:block;opacity:.85;font-size:14px;margin-top:2px}
-.launch .go{background:#fff;color:var(--pitch);font-weight:800;border-radius:8px;padding:8px 14px}
-@media (max-width:560px){.launch{grid-template-columns:1fr auto}.launch .thumbs{display:none}}
+/* this week: stories inline, table underneath */
+#weekstories{margin-top:18px}
+#weekstories .st-stage{margin:0}
 .alone{display:inline-block;margin-top:8px;font-size:14px;color:var(--pitch);font-weight:600}
-.overlay{position:fixed;inset:0;z-index:50;background:rgba(14,32,22,.86);overflow:auto;padding:52px 16px 24px}
-.overlay[hidden]{display:none}
-.overlay .close{position:fixed;top:12px;right:14px;font:700 15px Archivo,sans-serif;background:#fff;color:var(--ink);border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
-.overlay .close:focus-visible{outline:3px solid #fff;outline-offset:2px}
-.overlay .st-nav span{color:#E3EEE7}
-.overlay .st-bars i{background:rgba(255,255,255,.25)}
-.overlay .st-bars i.on{background:#fff}
-
 /* this week */
-.spot{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
-.spot>div{border-radius:12px;padding:14px 16px;color:#fff}
-.spot .k{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-.spot .p{font-weight:900;font-stretch:125%;font-size:26px;letter-spacing:-.02em;line-height:1.05;margin:4px 0 2px}
-.spot .chips span{background:rgba(255,255,255,.18);color:#fff}
-.spot .n{float:right;font-weight:900;font-stretch:125%;font-size:44px;line-height:.9}
-@media (max-width:560px){.spot{grid-template-columns:1fr}}
-.wtw{margin-top:12px;padding:4px 16px}
+.wtw{margin-top:22px;padding:4px 16px}
 .wt{width:100%;border-collapse:collapse;font-size:15px}
 .wt th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:10px 6px 6px;border-bottom:1px solid var(--ink)}
 .wt td{padding:11px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -141,6 +120,7 @@ h2{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:-.015em;margi
 .mk .rec{display:flex;gap:3px;flex-wrap:wrap;margin:4px 0 2px}
 .mk .rec i{width:14px;height:14px;border-radius:3px}
 .mini .in{color:var(--pitch)}.mini .out{color:var(--out)}
+.up{color:var(--pitch)}.dn{color:var(--out)}
 .foot{color:var(--muted);font-size:13px;margin-top:40px}
 /*@include stories.css*/
 </style>
@@ -153,10 +133,6 @@ h2{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:-.015em;margi
   <div class="legend" id="legend"></div>
 </aside>
 <main id="main"></main>
-</div>
-<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Gameweek stories" hidden>
-  <button class="close" id="close">Close</button>
-  <div id="storyroot"></div>
 </div>
 <script>
 const D = __DATA__;
@@ -180,24 +156,16 @@ const diverge = (rows, f) => { const m = Math.max(...rows.map(r => Math.abs(r.va
 const groups = {};
 D.jsn.filter(i => i.severity !== 'info').forEach(i => { const k = i.kind + i.player + i.text; (groups[k] ||= {...i, who: []}).who.push(i.manager); });
 const NEWS = Object.values(groups);
-const SLIDES = JSNStories.build(D);
 
 // ---- This week ----
 const wk = NAMES.map(n => ({n, ...D.weeks[n][GW]})).sort((a, b) => b.points - a.points);
 const winner = D.gw_winners[GW], caps = {};
 wk.forEach(w => { (caps[w.captain] ||= {pts: w.captain_pts, who: []}).who.push(w.n); });
 const capList = Object.entries(caps).sort((a, b) => b[1].pts - a[1].pts);
-// player and flop of the week across everyone's XIs
-const pick = (k, better) => { const best = wk.reduce((a, w) => better(w[k + '_pts'], a[k + '_pts']) ? w : a);
-  return {player: best[k], pts: best[k + '_pts'], who: wk.filter(w => w[k] === best[k]).map(w => w.n)}; };
-const potw = pick('star', (a, b) => a > b), fotw = pick('flop', (a, b) => a < b);
-const spot = `<div class="spot"><div style="background:var(--pitch)"><span class="n">${potw.pts}</span><span class="k">Player of the week</span><div class="p">${esc(potw.player)}</div><div class="chips">${potw.who.map(chip).join('')}</div></div><div style="background:var(--out)"><span class="n">${minus(fotw.pts)}</span><span class="k">Flop of the week</span><div class="p">${esc(fotw.player)}</div><div class="chips">${fotw.who.map(chip).join('')}</div></div></div>`;
 const capLine = capList.length > 1 ? `${capList[0][0]} beat ${capList[capList.length - 1][0]} by ${capList[0][1].pts - capList[capList.length - 1][1].pts} on the armband.` : `Everyone captained ${capList[0][0]}.`;
-const thisWeek = `<h1>${list(winner.winners)} ${winner.winners.length > 1 ? 'share' : 'wins'} gameweek ${GW} with ${winner.top}</h1>
-<p class="sub">${list(winner.spoon)} ${winner.spoon.length > 1 ? 'take' : 'takes'} the wooden spoon with ${winner.low}. ${capLine}</p>
-<button class="launch" id="launch"><span class="thumbs" aria-hidden="true">${SLIDES.slice(1, 7).map(s => `<i style="background:${s.bg}"></i>`).join('')}</span><span><strong>Gameweek ${GW} in ${SLIDES.length} stories</strong><small>The winner, the spoon, the armband, the bench and more. Made to screenshot into the chat.</small></span><span class="go">Watch</span></button>
+const thisWeek = `<h1>Gameweek ${GW}</h1>
+<div id="weekstories"></div>
 <a class="alone" href="stories.html">Open the stories on their own page</a>
-${spot}
 <div class="box wtw"><table class="wt"><thead><tr><th>Manager</th><th class="n">Pts</th><th>Top</th><th class="hide">Good</th><th>Flop</th><th class="n hide">Bench</th><th class="n hide">Hit</th></tr></thead><tbody>${wk.map(w => `<tr><td><b class="nm">${sw(w.n)}${w.n}</b></td><td class="n pts"${winner.winners.includes(w.n) ? ` style="color:${col(w.n)}"` : ''}>${w.points}</td><td>${esc(w.star)}<small class="up">${w.star_pts}</small></td><td class="hide">${esc(w.good)}<small>${w.good_pts}</small></td><td>${esc(w.flop)}<small class="dn">${minus(w.flop_pts)}</small></td><td class="n hide">${w.bench_pts}</td><td class="n hide${w.hits ? ' dn' : ' mu'}">${w.hits ? '−' + w.hits : '–'}${w.chip ? ` <small>${w.chip}</small>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
 
 // ---- Table ----
@@ -212,14 +180,18 @@ const table = `<h1>${esc(T[0].manager)} leads by ${T[0].points - T[1].points}</h
 <div class="box" style="overflow-x:auto"><table class="tbl"><thead><tr><th></th><th>Manager</th><th class="num">GW${GW}</th><th class="num">Weeks won</th><th class="num">Hits</th><th class="num">Total</th></tr></thead><tbody>${T.map(r => `<tr><td>${r.rank}</td><td><b style="display:flex;align-items:center;gap:7px">${sw(r.manager)}${r.manager}</b><span style="font-size:13px;color:var(--muted)">${esc(r.team)}</span></td><td class="num">${r.gw_points}</td><td class="num">${wins(r.manager)}</td><td class="num">${r.hits ? '−' + r.hits : '0'}</td><td class="num tot">${r.points}</td></tr>`).join('')}</tbody></table></div></div>`;
 
 // ---- Awards ----
-const fmt = (a, v) => a.key === 'template' ? v.toFixed(1) + '%' : a.key === 'milner' ? v.toFixed(1) : ['lucky','unlucky'].includes(a.key) ? sign(v) : Math.round(v);
-const awards = `<h1>Season awards</h1><p class="sub">After gameweek ${GW}. Every ranking is open so you can see who was close.</p><div class="grid g2">${['milner','differential','lucky','unlucky','captain','regret','bench','template'].map(k => { const a = aw(k), rows = a.ranking.filter(r => r.eligible !== false);
+const L = Object.entries(D.luck).map(([manager, x]) => ({manager, value: x.vs_group, ...x})).sort((a, b) => b.value - a.value);
+const fmt = (a, v) => a.key === 'template' ? v.toFixed(1) + '%' : a.key === 'milner' ? v.toFixed(1) : Math.round(v);
+// luckiest and unluckiest share one card: it's the same scale read from both ends
+const luckAward = `<div class="box aw"><p class="title">Luckiest and unluckiest</p><div class="win"><span style="color:${col(L[0].manager)}">${L[0].manager}</span> up, <span style="color:${col(L[L.length - 1].manager)}">${L[L.length - 1].manager}</span> down</div><p class="blurb">Points above or below what their chances deserved, against the group average.</p>${diverge(L, sign)}</div>`;
+const awards = `<h1>Season awards</h1><p class="sub">After gameweek ${GW}. Every ranking is open so you can see who was close.</p><div class="grid g2">${['milner','differential','luck','captain','regret','bench','template'].map(k => { if (k === 'luck') return luckAward; const a = aw(k), rows = a.ranking.filter(r => r.eligible !== false);
   return `<div class="box aw"><p class="title">${esc(a.title)}</p><div class="win">${a.winners.map(n => `<span style="color:${col(n)}">${n}</span>`).join(' + ')}</div><p class="blurb">${esc(a.blurb)}</p>${rows.length > 1 ? bars(rows, v => fmt(a, v)) : `<p class="blurb">Only ${rows[0].manager} is eligible right now.</p>`}</div>`; }).join('')}</div>`;
 
 // ---- Luck ----
-const L = Object.entries(D.luck).map(([manager, x]) => ({manager, value: x.vs_group, ...x})).sort((a, b) => b.value - a.value);
 const luck = `<h1>${esc(L[0].manager)} is riding it. ${esc(L[L.length - 1].manager)} is not.</h1><p class="sub">Points above or below what each squad's chances deserved, against the group average. Based on xG, xA and expected goals conceded.</p>
-<div class="grid"><div class="box">${diverge(L, sign)}</div></div><div class="grid g2">${L.map(x => `<div class="box"><h2 style="display:flex;align-items:center;gap:8px">${sw(x.manager)}${x.manager}</h2><ul class="mini">${x.lucky_players.slice(0, 2).map(p => `<li><span>${esc(p.player)}</span><b>${sign(p.pts)}</b></li>`).join('')}${x.unlucky_players.slice(0, 1).map(p => `<li><span>${esc(p.player)}</span><b>${sign(p.pts)}</b></li>`).join('')}</ul></div>`).join('')}</div>`;
+<div class="grid"><div class="box">${diverge(L, sign)}</div></div>
+<h2 style="margin-top:28px">The players behind it</h2><p class="sub" style="margin-top:0">The number next to a player is the points they've scored for you minus what their chances were worth. <b class="up">+10</b> means they've returned 10 more than their xG, xA and clean sheet odds deserved: clinical or lucky. <b class="dn">−5</b> means 5 fewer than they deserved: wasteful or unlucky. Points while captained count double.</p>
+<div class="grid g2">${L.map(x => `<div class="box"><h2 style="display:flex;align-items:center;gap:8px">${sw(x.manager)}${x.manager}</h2><ul class="mini">${[...x.lucky_players.slice(0, 2), ...x.unlucky_players.slice(0, 1)].map(p => `<li><span>${esc(p.player)}</span><b class="${p.pts >= 0 ? 'up' : 'dn'}">${sign(p.pts)}</b></li>`).join('')}</ul></div>`).join('')}</div>`;
 
 // ---- Transfer news: how good is each manager in the market ----
 // Every move outside a wildcard counts (Free Hits are already left out); hits come off the profit.
@@ -247,7 +219,7 @@ const news = `<h1>Team news</h1><p class="sub">Things that look wrong in your sq
 // ---- Versus ----
 const versus = `<h1>Head to head</h1><p class="sub">Pick two. Gameweeks won, how alike your teams are, and the players who made the difference.</p><div class="pick"><select id="sa" aria-label="First manager">${NAMES.map(n => `<option${n === 'Jim' ? ' selected' : ''}>${n}</option>`).join('')}</select><b>v</b><select id="sb" aria-label="Second manager">${NAMES.map(n => `<option${n === 'Dez' ? ' selected' : ''}>${n}</option>`).join('')}</select></div><div class="grid"><div class="box" id="vsout" aria-live="polite"></div></div>`;
 
-const TABS = [['week', 'This week', thisWeek], ['table', 'Table', table], ['awards', 'Awards', awards], ['luck', 'Luck', luck], ['transfers', 'Transfer news', transfers], ['news', 'Team news', news, NEWS.length], ['versus', 'Versus', versus]];
+const TABS = [['week', 'This week', thisWeek], ['table', 'Table', table], ['transfers', 'Transfer news', transfers], ['awards', 'Awards', awards], ['luck', 'Luck', luck], ['news', 'Team news', news, NEWS.length], ['versus', 'Versus', versus]];
 $('#tabs').innerHTML = TABS.map(([id, label, , n]) => `<button role="tab" id="t-${id}" aria-controls="p-${id}" aria-selected="false">${label}${n ? `<span class="n">${n}</span>` : ''}</button>`).join('');
 $('#main').innerHTML = TABS.map(([id, , html]) => `<section class="panel" role="tabpanel" id="p-${id}" aria-labelledby="t-${id}" hidden>${html}</section>`).join('') + `<p class="foot">Updated ${D.meta.updated.slice(0, 10)}. ${esc(D.meta.caveat_ownership)}</p>`;
 $('#legend').innerHTML = NAMES.map(chip).join('');
@@ -258,23 +230,11 @@ function show(id) {
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { show(b.id.slice(2)); window.scrollTo(0, 0); } });
 
-// stories open full-screen over the app
-const ov = $('#overlay');
-let player = null;
-function openStories() {
-  ov.hidden = false; document.body.style.overflow = 'hidden';
-  if (!player) player = JSNStories.mount($('#storyroot'), D, {isActive: () => !ov.hidden}); else player.goto(1);
-  $('#close').focus();
-}
-function closeStories() { ov.hidden = true; document.body.style.overflow = ''; $('#launch').focus(); }
-$('#launch').addEventListener('click', openStories);
-$('#close').addEventListener('click', closeStories);
-ov.addEventListener('click', e => { if (e.target === ov) closeStories(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !ov.hidden) closeStories(); });
+// stories play inline on the This week tab, only while it's showing
+JSNStories.mount($('#weekstories'), D, {autoplay: 5000, isActive: () => !$('#p-week').hidden});
 
 const start = location.hash.slice(1);
 show(TABS.some(([t]) => t === start) ? start : 'week');
-if (start === 'stories') openStories();
 
 function renderVs() {
   const a = $('#sa').value, b = $('#sb').value, out = $('#vsout');

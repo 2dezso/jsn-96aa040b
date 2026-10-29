@@ -1,9 +1,9 @@
-/* Gameweek stories: shared by the standalone page and the app overlay. Everything is scoped to .stories. */
+/* Gameweek stories: shared by the standalone page and the This week tab. Everything is scoped to .stories. */
 .stories{font-family:Archivo,system-ui,sans-serif}
 .stories .st-stage{width:min(440px,100%);margin:0 auto}
 .stories .st-bars{display:flex;gap:4px;margin-bottom:10px}
-.stories .st-bars i{flex:1;height:4px;border-radius:2px;background:#C9D6CE}
-.stories .st-bars i.on{background:var(--ink)}
+.stories .st-bars i{flex:1;height:4px;border-radius:2px;background:#C9D6CE;overflow:hidden}
+.stories .st-bars b{display:block;height:100%;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .1s linear}
 .stories .st-slide{aspect-ratio:4/5;border-radius:18px;overflow:hidden;position:relative;color:#fff;padding:26px 24px 22px;display:flex;flex-direction:column;cursor:pointer;user-select:none;background:var(--bg)}
 .stories .st-slide.st-light{color:var(--ink)}
 .stories .st-slide h1{font-family:Unbounded,sans-serif;font-weight:900;font-stretch:100%;font-size:clamp(26px,8.4vw,36px);line-height:1.04;letter-spacing:-.02em;margin:0;color:inherit}
