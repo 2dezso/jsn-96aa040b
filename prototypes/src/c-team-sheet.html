@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSN Team Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F7FAF8;--ink:#14281E;--muted:#587064;--pitch:#0B7A47;--mow:#0E8A52;--chalk:#FFFFFF;--line:#CFE3D7;--flag:#FF5A1F;--tint:#E4F2EA}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.5 Archivo,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+.mast{padding:18px 0 0;display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-stretch:100%}
+.mast strong{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:-.01em}
+.mast span{color:var(--muted);font-size:14px}
+.hero{display:grid;grid-template-columns:1fr;gap:20px;padding:20px 0 12px}
+@media (min-width:820px){.hero{grid-template-columns:1fr 400px;align-items:center}}
+.hero h1{font-weight:900;font-stretch:125%;font-size:clamp(40px,7.5vw,76px);line-height:.98;letter-spacing:-.025em;margin:0 0 14px}
+.hero p{max-width:36ch;margin:0;color:var(--muted);font-size:18px}
+.pitch{width:100%;height:auto;display:block;border-radius:6px}
+.pitch text{font-family:Archivo,sans-serif}
+h2{font-weight:900;font-stretch:125%;font-size:28px;letter-spacing:-.015em;margin:0 0 6px}
+.sub{margin:0 0 16px;color:var(--muted);font-size:15px}
+section{padding:34px 0 6px}
+.sheet{border-top:3px solid var(--ink)}
+.line{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:12px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.line dt{font-weight:600}
+.line dt small{display:block;font-weight:400;color:var(--muted);font-size:14px;max-width:46ch}
+.line dd{margin:0;text-align:right;font-weight:900;font-stretch:125%;font-size:26px;line-height:1.05}
+.line dd small{display:block;font:400 13px Archivo;color:var(--muted);font-stretch:100%}
+.news{display:grid;gap:10px}
+.flag{border-left:6px solid var(--flag);background:var(--chalk);padding:12px 14px;display:grid;gap:2px}
+.flag.doubt{border-left-color:#F2B600}
+.flag b{font-weight:800;font-size:19px}
+.flag span{color:var(--muted);font-size:15px}
+.lk{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center;margin:6px 0}
+.lk b{font-weight:800}
+.ax{position:relative;height:24px;background:linear-gradient(var(--line),var(--line)) center/2px 100% no-repeat}
+.ax i{position:absolute;top:2px;bottom:2px;border-radius:2px}
+.ax em{position:absolute;top:0;font-style:normal;font-weight:800;line-height:24px;font-size:14px}
+footer{padding:36px 0 56px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mast"><strong>JSN</strong><span id="date"></span></div>
+  <header class="hero">
+    <div><h1 id="h"></h1><p id="p"></p></div>
+    <svg class="pitch" id="pitch" viewBox="0 0 360 500" role="img" aria-label="The league table drawn as a football formation"></svg>
+  </header>
+  <section><h2>Team sheet</h2><p class="sub">Season awards after gameweek <span id="gw"></span>.</p><dl class="sheet" id="sheet"></dl></section>
+  <section><h2>Team news</h2><p class="sub">Things that look wrong in your squads right now.</p><div class="news" id="news"></div></section>
+  <section><h2>Luck against the chances</h2><p class="sub">Points above or below what each squad's chances deserved, against the group average.</p><div id="luck"></div></section>
+  <footer id="foot"></footer>
+</div>
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
+const aw = k => D.awards.find(a => a.key === k);
+const winners = a => a.winners;
+const list = a => a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a.slice(-1);
+const fmt = a => a.key === 'template' ? a.value.toFixed(1) + '% owned' : a.key === 'milner' ? a.value.toFixed(1) + ' pt spread' : ['lucky','unlucky'].includes(a.key) ? sign(a.value) + ' vs group' : Math.round(a.value) + ' pts';
+
+const T = D.table, lead = T[0], gap = lead.points - T[1].points;
+$('#date').textContent = `Gameweek ${D.meta.latest_gw}, ${D.meta.season}`;
+$('#gw').textContent = D.meta.latest_gw;
+$('#h').textContent = `${lead.manager} leads by ${gap}`;
+$('#p').textContent = `${T[T.length - 1].manager} is in goal, ${lead.points - T[T.length - 1].points} points back.`;
+
+// league table as a 1-2-2-1 formation: first place up front, last place in goal
+const pos = [[180, 62], [100, 180], [260, 180], [100, 298], [260, 298], [180, 408]];
+let s = '<rect width="360" height="500" fill="#0B7A47"/>';
+for (let i = 0; i < 8; i++) s += `<rect y="${i * 62.5}" width="360" height="31.25" fill="#0E8A52"/>`;
+s += `<g fill="none" stroke="#fff" stroke-width="2" opacity=".85"><rect x="14" y="14" width="332" height="472"/><line x1="14" y1="250" x2="346" y2="250"/><circle cx="180" cy="250" r="42"/><rect x="95" y="14" width="170" height="62"/><rect x="95" y="424" width="170" height="62"/><rect x="140" y="14" width="80" height="26"/><rect x="140" y="460" width="80" height="26"/></g>`;
+s += T.map((r, i) => { const [x, y] = pos[i];
+  return `<g><circle cx="${x}" cy="${y}" r="27" fill="${i === 0 ? '#FF5A1F' : '#fff'}"/><text x="${x}" y="${y + 9}" text-anchor="middle" font-size="26" font-weight="900" font-stretch="125%" fill="${i === 0 ? '#fff' : '#14281E'}">${r.rank}</text><text x="${x}" y="${y + 46}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">${esc(r.manager)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="12" font-weight="500" fill="#fff" opacity=".9">${r.points} pts</text></g>`; }).join('');
+$('#pitch').innerHTML = s;
+
+const order = ['milner','differential','lucky','unlucky','captain','regret','bench','template'];
+$('#sheet').innerHTML = order.map(k => { const a = aw(k), w = winners(a);
+  return `<div class="line"><dt>${esc(a.title)}<small>${esc(a.blurb)}</small></dt><dd>${esc(w.join(' + '))}<small>${fmt(a)}</small></dd></div>`; }).join('');
+
+const groups = {};
+D.jsn.filter(i => i.severity !== 'info').forEach(i => { const k = i.kind + i.player + i.text; (groups[k] ||= {...i, who: []}).who.push(i.manager); });
+$('#news').innerHTML = Object.values(groups).map(g => `<div class="flag ${g.severity}"><b>${esc(g.player)}</b><span>${esc(g.text)}. In the squads of ${list(g.who)}.</span></div>`).join('');
+
+const L = Object.entries(D.luck).sort((a, b) => b[1].vs_group - a[1].vs_group), lmax = Math.max(...L.map(([, x]) => Math.abs(x.vs_group)));
+$('#luck').innerHTML = L.map(([n, x]) => { const w = Math.abs(x.vs_group) / lmax * 36, p = x.vs_group >= 0;
+  return `<div class="lk"><b>${n}</b><div class="ax"><i style="${p ? 'left:50%' : 'right:50%'};width:${w}%;background:${p ? 'var(--pitch)' : 'var(--flag)'}"></i><em style="${p ? `left:calc(50% + ${w}% + 6px)` : `right:calc(50% + ${w}% + 6px)`}">${sign(x.vs_group)}</em></div></div>`; }).join('');
+$('#foot').textContent = `Updated ${D.meta.updated.slice(0, 10)}. ${D.meta.caveat_ownership}`;
+</script>
+</body>
+</html>

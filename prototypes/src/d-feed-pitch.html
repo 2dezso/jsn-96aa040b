@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSN Feed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F7FAF8;--ink:#14281E;--muted:#587064;--pitch:#0B7A47;--mow:#0E8A52;--card:#FFFFFF;--line:#D6E6DC;--wash:#EAF3ED;--out:#C8321F;--doubt:#B7790A;
+--Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Jack:#D6347F}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.45 Archivo,system-ui,sans-serif}
+.app{max-width:560px;margin:0 auto;padding-bottom:84px}
+header{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line);padding:11px 16px;display:flex;align-items:center;gap:12px}
+.av{width:30px;height:30px;border-radius:7px;background:var(--pitch);color:#fff;display:grid;place-items:center;font:900 10px Archivo;font-stretch:125%;flex:none;letter-spacing:.01em}
+header .av{width:38px;height:38px;font-size:12px}
+header strong{display:block;font-weight:900;font-stretch:125%;font-size:17px;line-height:1.1;letter-spacing:-.01em}
+header small{color:var(--muted);font-size:13px}
+.dots{margin-left:auto;display:flex;gap:4px}
+.dots i{width:10px;height:22px;border-radius:2px;display:block}
+.feed{padding:14px 16px;display:grid;gap:14px}
+.day{justify-self:center;font-size:13px;font-weight:600;color:var(--muted);background:var(--wash);border-radius:6px;padding:3px 10px}
+.post{display:flex;gap:10px;align-items:flex-start;scroll-margin-top:68px}
+.card{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h1,.card h2{margin:0;font-weight:900;font-stretch:125%;letter-spacing:-.02em;line-height:1.02}
+.card h1{font-size:clamp(28px,7.4vw,40px)}
+.card h2{font-size:22px;letter-spacing:-.015em}
+.sub{margin:6px 0 0;color:var(--muted);font-size:15px}
+.title{margin:0 0 2px;font-weight:700;font-size:15px}
+.win{font-weight:900;font-stretch:125%;font-size:clamp(32px,9vw,42px);line-height:1.02;letter-spacing:-.02em}
+.win .plus{color:var(--muted);font-weight:500;padding:0 .15em}
+.val{margin:4px 0 0;font-weight:700;font-size:15px}
+.blurb{margin:6px 0 0;color:var(--muted);font-size:15px;max-width:44ch}
+.note{margin:10px 0 0;font-size:14px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+details{margin-top:12px;border-top:1px solid var(--line)}
+summary{cursor:pointer;padding:10px 0 4px;font-weight:600;font-size:14px;color:var(--pitch);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:" +"}
+details[open] summary::after{content:" −"}
+summary:focus-visible,select:focus-visible,nav a:focus-visible{outline:3px solid var(--pitch);outline-offset:2px;border-radius:4px}
+.r{display:grid;grid-template-columns:52px 1fr 52px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
+.r b{font-weight:700;display:flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:9px;height:9px;border-radius:2px;flex:none}
+.r .b{height:10px;background:var(--wash);border-radius:2px;overflow:hidden}
+.r .b i{display:block;height:100%}
+.r span:last-child{text-align:right;font-weight:700}
+.dv{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center;margin:6px 0;font-size:14px}
+.dv b{font-weight:700;display:flex;align-items:center;gap:6px}
+.ax{position:relative;height:22px;background:linear-gradient(var(--line),var(--line)) center/2px 100% no-repeat}
+.ax i{position:absolute;top:3px;bottom:3px;border-radius:2px}
+.ax em{position:absolute;top:0;line-height:22px;font-style:normal;font-weight:700;font-size:13px}
+.pitch{display:block;width:100%;max-width:340px;height:auto;margin:14px auto 0;border-radius:6px}
+.pitch text{font-family:Archivo,sans-serif}
+.flag{border-left:5px solid var(--out);background:var(--card);padding:12px 14px;border-radius:0 10px 10px 0;border:1px solid var(--line);border-left-width:5px}
+.flag.doubt{border-left-color:var(--doubt)}
+.flag h2{font-size:19px}
+.flag .st{font-weight:700;font-size:13px;color:var(--out)}
+.flag.doubt .st{color:var(--doubt)}
+.owners{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.owners span{display:inline-flex;align-items:center;gap:6px;background:var(--wash);border-radius:5px;padding:2px 8px 2px 7px;font-size:13px;font-weight:600}
+.pick{display:flex;gap:8px;align-items:center;margin:12px 0 4px}
+.pick select{font:600 16px Archivo;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:7px;padding:8px 10px;flex:1;min-width:0}
+.pick span{font-weight:700;color:var(--muted)}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.vs div{border-top:4px solid;padding-top:8px}
+.vs .big{font-weight:900;font-stretch:125%;font-size:34px;line-height:1}
+.vs p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.by{margin:10px 0 0;padding:0;list-style:none;font-size:14px}
+.by li{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:5px 0}
+.by li b{font-weight:700}
+.foot{padding:6px 16px 20px;color:var(--muted);font-size:13px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:560px;background:var(--paper);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:6px;overflow-x:auto}
+nav a{flex:none;text-decoration:none;color:var(--ink);font-weight:600;font-size:14px;padding:7px 12px;border-radius:7px;background:var(--wash)}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <span class="av">JSN</span>
+  <div><strong>Jim Sport News</strong><small>Where things are wrong</small></div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+</header>
+<main class="feed" id="feed"></main>
+<p class="foot" id="foot"></p>
+<nav aria-label="Sections"><a href="#p-pitch">Table</a><a href="#p-awards">Awards</a><a href="#p-luck">Luck</a><a href="#p-subs">Transfers</a><a href="#p-news">Team news</a><a href="#p-vs">Versus</a></nav>
+</div>
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
+const aw = k => D.awards.find(a => a.key === k);
+const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+const col = n => `var(--${n})`;
+const sw = n => `<i class="sw" style="background:${col(n)}"></i>`;
+const names = w => w.map(n => `<span style="color:${col(n)}">${esc(n)}</span>`).join('<span class="plus">+</span>');
+const list = a => a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a.slice(-1);
+const fmt = a => a.key === 'template' ? a.value.toFixed(1) + '% average ownership' : a.key === 'milner' ? a.value.toFixed(1) + ' point weekly spread' : ['lucky','unlucky'].includes(a.key) ? sign(a.value) + ' against the group' : Math.round(a.value) + ' points';
+const rv = (a, v) => a.key === 'template' ? v.toFixed(1) + '%' : a.key === 'milner' ? v.toFixed(1) : ['lucky','unlucky'].includes(a.key) ? sign(v) : Math.round(v);
+const post = (id, inner) => `<article class="post"${id ? ` id="${id}"` : ''}><span class="av">JSN</span><div class="card">${inner}</div></article>`;
+const bars = (rows, max, f) => rows.map(r => `<div class="r"><b>${sw(r.manager)}${r.manager}</b><span class="b"><i style="width:${Math.max(3, Math.abs(r.value) / max * 100)}%;background:${col(r.manager)}"></i></span><span>${f(r.value)}</span></div>`).join('');
+const diverge = (rows, f) => { const m = Math.max(...rows.map(r => Math.abs(r.value))) || 1;
+  return rows.map(r => { const w = Math.abs(r.value) / m * 36, p = r.value >= 0;
+    return `<div class="dv"><b>${sw(r.manager)}${r.manager}</b><div class="ax"><i style="${p ? 'left:50%' : 'right:50%'};width:${w}%;background:${col(r.manager)}"></i><em style="${p ? `left:calc(50% + ${w}% + 6px)` : `right:calc(50% + ${w}% + 6px)`}">${f(r.value)}</em></div></div>`; }).join(''); };
+
+$('#dots').innerHTML = NAMES.map(n => `<i style="background:${col(n)}"></i>`).join('');
+const T = D.table, lead = T[0], last = T[T.length - 1];
+let h = `<div class="day">Gameweek ${D.meta.latest_gw} is in</div>`;
+
+// 1. the table as a formation: first place up front, last place in goal
+const pos = [[180, 62], [100, 180], [260, 180], [100, 298], [260, 298], [180, 408]];
+let svg = '<rect width="360" height="500" fill="#0B7A47"/>';
+for (let i = 0; i < 8; i++) svg += `<rect y="${i * 62.5}" width="360" height="31.25" fill="#0E8A52"/>`;
+svg += `<g fill="none" stroke="#fff" stroke-width="2" opacity=".85"><rect x="14" y="14" width="332" height="472"/><line x1="14" y1="250" x2="346" y2="250"/><circle cx="180" cy="250" r="42"/><rect x="95" y="14" width="170" height="62"/><rect x="95" y="424" width="170" height="62"/><rect x="140" y="14" width="80" height="26"/><rect x="140" y="460" width="80" height="26"/></g>`;
+svg += T.map((r, i) => { const [x, y] = pos[i];
+  return `<g><circle cx="${x}" cy="${y}" r="27" fill="${col(r.manager)}" stroke="#fff" stroke-width="${i === 0 ? 4 : 2}"/><text x="${x}" y="${y + 9}" text-anchor="middle" font-size="26" font-weight="900" font-stretch="125%" fill="#fff">${r.rank}</text><text x="${x}" y="${y + 47}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">${esc(r.manager)}</text><text x="${x}" y="${y + 63}" text-anchor="middle" font-size="12" font-weight="500" fill="#fff">${r.points} pts</text></g>`; }).join('');
+h += post('p-pitch', `<h1>${esc(lead.manager)} leads by ${lead.points - T[1].points}</h1><p class="sub">${esc(last.manager)} is in goal, ${lead.points - last.points} points back. Points after hits.</p><svg class="pitch" viewBox="0 0 360 500" role="img" aria-label="The league table as a formation: ${T.map(r => `${r.rank}, ${r.manager}, ${r.points} points`).join('; ')}">${svg}</svg>`);
+
+// 2. awards: winner and value up front, the full ranking on tap
+const order = ['milner','differential','captain','regret','bench','template'];
+h += order.map((k, i) => { const a = aw(k), rows = a.ranking.filter(r => r.eligible !== false), mx = Math.max(...rows.map(r => Math.abs(r.value)));
+  const inel = a.ranking.filter(r => r.eligible === false && r.value < a.value);
+  const note = inel.length ? `<p class="note">${list(inel.map(r => r.manager))} ${inel.length > 1 ? 'have' : 'has'} a lower spread (${inel.map(r => r.value.toFixed(1)).join(', ')}) but ${inel.length > 1 ? "aren't" : "isn't"} eligible: a hit or outside the top half.</p>` : '';
+  return post(i === 0 ? 'p-awards' : '', `<p class="title">${esc(a.title)}</p><div class="win">${names(a.winners)}</div><p class="val">${fmt(a)}</p><p class="blurb">${esc(a.blurb)}</p>${note}${rows.length > 1 ? `<details open><summary>See all ${rows.length}</summary>${bars(rows, mx, v => rv(a, v))}</details>` : ''}`); }).join('');
+
+// 3. luck
+const L = Object.entries(D.luck).map(([manager, x]) => ({manager, value: x.vs_group})).sort((a, b) => b.value - a.value);
+h += post('p-luck', `<h2>${esc(L[0].manager)} is riding it. ${esc(L[L.length - 1].manager)} is not.</h2><p class="sub">Points above or below what each squad's chances deserved, against the group average.</p><div style="margin-top:10px">${diverge(L, sign)}</div>`);
+
+// 4. transfer regret
+const tr = Object.entries(D.transfers).filter(([, v]) => v.best);
+const bestAll = tr.map(([m, v]) => ({m, ...v.best})).sort((a, b) => b.net - a.net)[0];
+const worstAll = tr.map(([m, v]) => ({m, ...v.worst})).sort((a, b) => a.net - b.net)[0];
+h += post('p-subs', `<h2>${esc(worstAll.m)} sold ${esc(worstAll.out)} for ${esc(worstAll.in)}</h2><p class="sub">That swap cost ${Math.abs(worstAll.net)} points. Best move: ${esc(bestAll.m)}, ${esc(bestAll.in)} for ${esc(bestAll.out)}, +${bestAll.net}.</p><p class="title" style="margin-top:12px">Net points from transfers</p>${diverge(tr.map(([manager, v]) => ({manager, value: v.normal_net})).sort((a, b) => b.value - a.value), sign)}`);
+
+// 5. team news
+const groups = {};
+D.jsn.filter(i => i.severity !== 'info').forEach(i => { const k = i.kind + i.player + i.text; (groups[k] ||= {...i, who: []}).who.push(i.manager); });
+const G = Object.values(groups);
+h += G.map((g, i) => `<article class="post"${i ? '' : ' id="p-news"'}><span class="av">JSN</span><div class="card flag ${g.severity}"><span class="st">${g.severity === 'out' ? 'Out' : 'Doubtful'}</span><h2>${esc(g.player)}</h2><p class="sub" style="margin-top:2px">${esc(g.text)}</p><div class="owners">${g.who.map(n => `<span>${sw(n)}${n}</span>`).join('')}</div></div></article>`).join('');
+
+// 6. head to head, with a picker
+h += post('p-vs', `<h2>Head to head</h2><div class="pick"><label class="sr" for="sa" hidden>First manager</label><select id="sa">${NAMES.map(n => `<option${n === 'Jim' ? ' selected' : ''}>${n}</option>`).join('')}</select><span>v</span><label for="sb" hidden>Second manager</label><select id="sb">${NAMES.map(n => `<option${n === 'Dez' ? ' selected' : ''}>${n}</option>`).join('')}</select></div><div id="vsout" aria-live="polite"></div>`);
+$('#feed').innerHTML = h;
+
+function renderVs() {
+  const a = $('#sa').value, b = $('#sb').value, out = $('#vsout');
+  if (a === b) { out.innerHTML = '<p class="sub">Pick two different managers.</p>'; return; }
+  const p = D.h2h[`${a}-${b}`] || D.h2h[`${b}-${a}`], w = p.wins;
+  out.innerHTML = `<div class="vs">${[a, b].map(n => `<div style="border-color:${col(n)}"><span class="big" style="color:${col(n)}">${w[n]}</span><p>${w[n] === 1 ? 'gameweek' : 'gameweeks'} won by ${n}. Season: ${p.points[n]} points.</p></div>`).join('')}</div><p class="sub">${w.draw ? `${w.draw} drawn. ` : ''}Their XIs share ${p.xi_overlap}% of players on average.</p>${[a, b].map(n => `<ul class="by"><li><b>${sw(n)}${n}'s edge</b><span></span></li>${p.decided_by[n].map(d => `<li><span>${esc(d.player)}</span><b>${d.pts} pts</b></li>`).join('')}</ul>`).join('')}`;
+}
+$('#sa').addEventListener('change', renderVs); $('#sb').addEventListener('change', renderVs); renderVs();
+$('#foot').textContent = `Updated ${D.meta.updated.slice(0, 10)}. ${D.meta.caveat_ownership}`;
+</script>
+</body>
+</html>

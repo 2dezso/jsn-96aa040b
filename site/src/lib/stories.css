@@ -1,0 +1,33 @@
+/* Gameweek stories: shared by the standalone page and the app overlay. Everything is scoped to .stories. */
+.stories{font-family:Archivo,system-ui,sans-serif}
+.stories .st-stage{width:min(440px,100%);margin:0 auto}
+.stories .st-bars{display:flex;gap:4px;margin-bottom:10px}
+.stories .st-bars i{flex:1;height:4px;border-radius:2px;background:#C9D6CE}
+.stories .st-bars i.on{background:var(--ink)}
+.stories .st-slide{aspect-ratio:4/5;border-radius:18px;overflow:hidden;position:relative;color:#fff;padding:26px 24px 22px;display:flex;flex-direction:column;cursor:pointer;user-select:none;background:var(--bg)}
+.stories .st-slide.st-light{color:var(--ink)}
+.stories .st-slide h1{font-family:Unbounded,sans-serif;font-weight:900;font-stretch:100%;font-size:clamp(26px,8.4vw,36px);line-height:1.04;letter-spacing:-.02em;margin:0;color:inherit}
+.stories .st-num{font-family:Unbounded,sans-serif;font-weight:900;font-size:clamp(90px,30vw,140px);line-height:.85;letter-spacing:-.04em;margin-top:auto}
+.stories .st-slide p{margin:10px 0 0;font-size:17px;font-weight:600;opacity:.94;max-width:30ch;color:inherit}
+.stories .st-foot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:12px;font-weight:700;opacity:.85}
+.stories .st-foot b{font-family:Unbounded,sans-serif;font-weight:900;font-size:14px;letter-spacing:.02em}
+.stories .st-spacer{margin-top:auto}
+.stories .st-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.stories .st-pills span{background:rgba(255,255,255,.22);border-radius:6px;padding:4px 10px;font-weight:700;font-size:14px}
+.stories .st-light .st-pills span{background:rgba(20,40,30,.08)}
+.stories .st-split{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto}
+.stories .st-split>div{border-radius:12px;padding:12px;background:rgba(20,40,30,.06)}
+.stories .st-p{font-family:Unbounded,sans-serif;font-weight:900;font-size:40px;line-height:1}
+.stories .st-n{font-weight:700;font-size:15px;margin-top:2px}
+.stories .st-lb{display:grid;grid-template-columns:48px 1fr 44px;gap:8px;align-items:center;margin:5px 0;font-weight:700;font-size:15px}
+.stories .st-t{height:16px;border-radius:4px;background:rgba(255,255,255,.18);position:relative}
+.stories .st-t i{position:absolute;top:0;bottom:0;border-radius:4px;background:#fff}
+.stories .st-t:before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:rgba(255,255,255,.6)}
+.stories .st-pitch{width:72%;margin:14px auto 0;display:block}
+.stories .st-pitch text{font-family:Archivo,sans-serif}
+.stories .st-zone{position:absolute;top:0;bottom:0;width:30%;left:0}
+.stories .st-nav{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.stories .st-nav button{font:700 15px Archivo,sans-serif;color:var(--ink);background:#fff;border:1px solid #C9D6CE;border-radius:8px;padding:8px 14px;cursor:pointer}
+.stories .st-nav button:disabled{opacity:.4;cursor:default}
+.stories .st-nav button:focus-visible{outline:3px solid var(--pitch);outline-offset:2px}
+.stories .st-nav span{font-size:14px;color:var(--muted);font-weight:600}

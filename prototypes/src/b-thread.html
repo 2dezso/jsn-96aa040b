@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSN Thread</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F1EEFF;--ink:#241B4B;--muted:#6C6490;--card:#FFFFFF;--line:#E2DDF7;--bot:#4B2FE0;
+--Jim:#FF6B5A;--Ash:#7B5CFF;--Haz:#00A79B;--Cal:#F5A400;--Dez:#2E8BFF;--Jack:#F0509A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.4 'Bricolage Grotesque',system-ui,sans-serif}
+.app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+.bot{width:42px;height:42px;border-radius:14px;background:var(--bot);color:#fff;display:grid;place-items:center;font:800 14px 'Bricolage Grotesque';flex:none}
+header strong{display:block;font-weight:800;font-size:18px;line-height:1.1}
+header small{color:var(--muted);font-size:13px}
+.dots{margin-left:auto;display:flex}
+.dots i{width:22px;height:22px;border-radius:50%;border:2px solid var(--bg);margin-left:-6px;display:grid;place-items:center;font:800 10px 'Bricolage Grotesque';color:#fff;font-style:normal}
+.feed{padding:12px 16px 90px;display:flex;flex-direction:column;gap:12px}
+.day{align-self:center;font-size:13px;color:var(--muted);background:#E6E1FA;border-radius:99px;padding:4px 12px;margin:6px 0}
+.msg{display:flex;gap:8px;align-items:flex-end;max-width:100%}
+.msg .bot{width:30px;height:30px;border-radius:10px;font-size:10px}
+.bubble{background:var(--card);border-radius:20px 20px 20px 6px;padding:14px 16px;box-shadow:0 1px 0 var(--line);min-width:0;flex:1}
+.bubble.alert{background:#FFF3E8;border:1.5px solid #FFC38A}
+.bubble h3{margin:0 0 2px;font-size:19px;font-weight:800;line-height:1.15}
+.bubble .lede{margin:0 0 10px;color:var(--muted);font-size:14.5px}
+.who{display:inline-flex;align-items:center;gap:6px;font-weight:800}
+.chip{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 7px;border-radius:99px;color:#fff;font:800 12px 'Bricolage Grotesque'}
+.r{display:grid;grid-template-columns:62px 1fr 48px;gap:8px;align-items:center;margin:5px 0;font-size:14px}
+.r .b{height:12px;border-radius:99px;background:#F1EEFF;overflow:hidden}
+.r .b i{display:block;height:100%;border-radius:99px}
+.r span:last-child{text-align:right;font-weight:800}
+.big{font-size:44px;line-height:1;font-weight:800;letter-spacing:-.02em}
+.react{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.react span{background:#F1EEFF;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:600}
+.tbl .r{grid-template-columns:22px 62px 1fr 44px}
+.tbl .r b{color:var(--muted);font-weight:600}
+.tie{font-size:13px;color:var(--muted);margin-top:6px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:var(--bg);border-top:1px solid var(--line);padding:10px 12px 14px;display:flex;gap:8px;overflow-x:auto}
+nav a{flex:none;text-decoration:none;color:var(--ink);background:var(--card);border-radius:99px;padding:8px 14px;font-weight:600;font-size:14px;box-shadow:0 1px 0 var(--line)}
+nav a:focus-visible{outline:3px solid var(--bot);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <span class="bot">JSN</span>
+  <div><strong>Jim Sport News</strong><small>Where things are wrong</small></div>
+  <div class="dots" id="dots"></div>
+</header>
+<div class="feed" id="feed"></div>
+<nav><a href="#t-table">Table</a><a href="#t-awards">Awards</a><a href="#t-luck">Luck</a><a href="#t-subs">Transfers</a><a href="#t-news">JSN report</a><a href="#t-vs">Head to head</a></nav>
+</div>
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
+const aw = k => D.awards.find(a => a.key === k);
+const col = n => `var(--${n})`;
+const chip = n => `<span class="chip" style="background:${col(n)}">${n}</span>`;
+const winners = a => a.winners;
+const list = a => a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a.slice(-1);
+const rv = (a, v) => a.key === 'template' ? v.toFixed(1) + '%' : a.key === 'milner' ? v.toFixed(1) : ['lucky','unlucky'].includes(a.key) ? sign(v) : Math.round(v);
+const msg = (id, html, cls = '') => `<div class="msg" id="${id}"><span class="bot">JSN</span><div class="bubble ${cls}">${html}</div></div>`;
+const bars = (rows, max, fmt, colorFn) => rows.map(r => `<div class="r"><span class="who" style="color:${col(r.manager)}">${r.manager}</span><span class="b"><i style="width:${Math.max(3, Math.abs(r.value) / max * 100)}%;background:${colorFn(r)}"></i></span><span>${fmt(r.value)}</span></div>`).join('');
+
+$('#dots').innerHTML = ['Jim','Ash','Haz','Cal','Dez','Jack'].map(n => `<i style="background:${col(n)}">${n[0]}</i>`).join('');
+const T = D.table, lead = T[0], gap = lead.points - T[1].points;
+const icon = {milner:'🏅',differential:'👑',lucky:'🍀',unlucky:'💀',captain:'🎯',regret:'🤡',bench:'🪑',template:'🐑'};
+let h = `<div class="day">Gameweek ${D.meta.latest_gw} is in</div>`;
+
+h += msg('t-table', `<h3>${esc(lead.manager)} leads by ${gap}</h3><p class="lede">Gameweek ${D.meta.latest_gw}, points after hits.</p><div class="tbl">${T.map(r => `<div class="r"><b>${r.rank}</b><span class="who" style="color:${col(r.manager)}">${r.manager}</span><span class="b"><i style="width:${r.points / lead.points * 100}%;background:${col(r.manager)}"></i></span><span>${r.points}</span></div>`).join('')}</div>`);
+
+['milner','differential','captain','regret','bench','template'].forEach(k => { const a = aw(k), w = winners(a);
+  const tied = w.length > 1 ? `<div class="tie">Tied: ${w.join(' and ')}</div>` : '';
+  h += msg(k === 'milner' ? 't-awards' : 't-' + k, `<p class="lede" style="margin:0 0 4px">${icon[k]} ${esc(a.title)}</p><div class="big" style="color:${col(w[0])}">${esc(w.join(' + '))}</div><p class="lede" style="margin:6px 0 10px">${esc(a.blurb)}</p>${bars(a.ranking.filter(r => r.eligible !== false), Math.max(...a.ranking.filter(r => r.eligible !== false).map(r => Math.abs(r.value))), v => rv(a, v), r => col(r.manager))}${tied}`);
+});
+
+const L = Object.entries(D.luck).map(([manager, x]) => ({manager, value: x.vs_group})).sort((a, b) => b.value - a.value);
+const lmax = Math.max(...L.map(r => Math.abs(r.value)));
+h += msg('t-luck', `<p class="lede" style="margin:0 0 4px">🍀 Luck check</p><h3>${L[0].manager} is riding it. ${L[L.length-1].manager} is not.</h3><p class="lede">Points above or below what the chances deserved, against the group average.</p>${bars(L, lmax, sign, r => r.value >= 0 ? col(r.manager) : '#C9C2EA')}`);
+
+const tr = Object.entries(D.transfers).filter(([, v]) => v.best);
+const bestAll = tr.map(([m, v]) => ({m, ...v.best})).sort((a, b) => b.net - a.net)[0];
+const worstAll = tr.map(([m, v]) => ({m, ...v.worst})).sort((a, b) => a.net - b.net)[0];
+h += msg('t-subs', `<p class="lede" style="margin:0 0 4px">🔁 Transfer regret</p><h3>${esc(worstAll.m)} sold ${esc(worstAll.out)} and bought ${esc(worstAll.in)}</h3><p class="lede">That swap cost ${Math.abs(worstAll.net)} points. Best move: ${esc(bestAll.m)}, ${esc(bestAll.in)} for ${esc(bestAll.out)}, +${bestAll.net}.</p>${bars(tr.map(([manager, v]) => ({manager, value: v.normal_net})).sort((a, b) => b.value - a.value), Math.max(...tr.map(([, v]) => Math.abs(v.normal_net))), sign, r => r.value >= 0 ? col(r.manager) : '#C9C2EA')}`);
+
+const groups = {};
+D.jsn.filter(i => i.severity !== 'info').forEach(i => { const k = i.kind + i.player + i.text; (groups[k] ||= {...i, who: []}).who.push(i.manager); });
+Object.values(groups).forEach((g, idx) => { h += msg(idx ? '' : 't-news', `<p class="lede" style="margin:0 0 4px">⚠️ JSN report</p><h3>${esc(g.player)}: ${esc(g.text)}</h3><p class="lede" style="margin:4px 0 0">Owned by ${g.who.map(chip).join(' ')}</p>`, 'alert'); });
+
+const pair = D.h2h['Jim-Dez'], w = pair.wins;
+h += msg('t-vs', `<p class="lede" style="margin:0 0 4px">⚔️ Head to head</p><h3>${chip(pair.a)} vs ${chip(pair.b)}</h3><p class="lede">${pair.a} won ${w[pair.a]} gameweeks, ${pair.b} won ${w[pair.b]}. Their XIs share ${pair.xi_overlap}% of players.</p><div class="react"><span>${pair.a} decided by ${esc(pair.decided_by[pair.a][0].player)} (${pair.decided_by[pair.a][0].pts})</span><span>${pair.b} decided by ${esc(pair.decided_by[pair.b][0].player)} (${pair.decided_by[pair.b][0].pts})</span></div>`);
+$('#feed').innerHTML = h;
+</script>
+</body>
+</html>

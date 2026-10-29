@@ -1,0 +1,8 @@
+# generated: the pipeline and builds recreate these
+data/
+site/public/
+prototypes/out/
+__pycache__/
+
+# product doc names the real people; keep it out of the public repo
+PRD.md

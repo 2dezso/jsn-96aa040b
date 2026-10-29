@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSN Breaking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0F1B4C;--blue:#1F44E5;--yellow:#FFD60A;--red:#E4202B;--paper:#FFFFFF;--mist:#EEF1FA;--line:#D5DBF0;--muted:#56608A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--mist);color:var(--navy);font:500 17px/1.45 Barlow,system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:'Barlow Condensed',sans-serif;margin:0;line-height:.95;letter-spacing:-.005em}
+.top{background:var(--navy);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:14px;padding-top:12px;padding-bottom:12px}
+.logo{background:var(--yellow);color:var(--navy);font:800 28px/1 'Barlow Condensed';padding:6px 12px 5px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.top small{font-size:15px;opacity:.8}
+.ticker{background:var(--yellow);color:var(--navy);display:flex;overflow:hidden;border-bottom:3px solid var(--navy)}
+.ticker b{background:var(--red);color:#fff;font:700 18px/1 'Barlow Condensed';padding:11px 22px 10px 14px;clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%);flex:none;position:relative;z-index:1;letter-spacing:.02em}
+.track{display:flex;white-space:nowrap;padding:9px 0;font-weight:600}
+.track span{padding:0 28px}
+.track span::before{content:"";display:inline-block;width:8px;height:8px;background:var(--navy);margin-right:12px;transform:rotate(45deg)}
+@media (prefers-reduced-motion:no-preference){.track{animation:run 38s linear infinite}}
+@keyframes run{to{transform:translateX(-50%)}}
+.hero{background:var(--blue);color:#fff;padding:36px 0 44px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:0;bottom:0;width:260px;background:var(--yellow);transform:skewX(-14deg);opacity:.14}
+.tag{display:inline-block;font:700 17px/1 'Barlow Condensed';background:var(--red);color:#fff;padding:7px 16px 6px 12px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.hero h1{font-size:clamp(52px,11vw,112px);font-weight:800;margin:16px 0 12px;max-width:15ch;text-transform:uppercase}
+.hero p{font-size:20px;max-width:34ch;margin:0;color:#DCE4FF}
+section{padding:34px 0 8px}
+h2{font-size:38px;font-weight:800;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+h2::before{content:"";width:10px;height:32px;background:var(--red);transform:skewX(-14deg)}
+.score{background:var(--paper);border:2px solid var(--navy)}
+.row{display:grid;grid-template-columns:42px 1fr 70px;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.rk{font:800 30px/1 'Barlow Condensed';color:var(--blue)}
+.nm{font:700 24px/1 'Barlow Condensed'}
+.nm small{font:500 14px Barlow;color:var(--muted);margin-left:8px}
+.bar{height:8px;background:var(--mist);margin-top:7px}
+.bar i{display:block;height:100%;background:var(--blue)}
+.row:first-child .bar i{background:var(--red)}
+.pt{font:800 30px/1 'Barlow Condensed';text-align:right}
+.hit{font:600 13px Barlow;color:var(--red);display:block;text-align:right}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--paper);border:2px solid var(--navy);padding:16px 16px 14px;position:relative}
+.card h3{font-size:19px;font-weight:700;background:var(--navy);color:#fff;display:inline-block;padding:5px 12px 4px;margin:-16px 0 12px -16px;text-transform:uppercase;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.win{font:800 52px/.95 'Barlow Condensed';text-transform:uppercase}
+.val{font:700 22px 'Barlow Condensed';color:var(--blue);margin-left:8px}
+.card p{margin:8px 0 10px;color:var(--muted);font-size:15px}
+.next{font-size:14px;border-top:1px solid var(--line);padding-top:8px;color:var(--muted)}
+.next b{color:var(--navy)}
+.luck{background:var(--paper);border:2px solid var(--navy);padding:16px}
+.lk{display:grid;grid-template-columns:54px 1fr;gap:12px;align-items:center;margin:8px 0}
+.lk .nm{font-size:22px}
+.axis{position:relative;height:26px;background:linear-gradient(var(--line),var(--line)) center/2px 100% no-repeat}
+.axis i{position:absolute;top:3px;bottom:3px}
+.axis em{position:absolute;top:2px;font:700 17px/22px 'Barlow Condensed';font-style:normal}
+.news{background:var(--paper);border:2px solid var(--navy)}
+.item{display:grid;grid-template-columns:78px 1fr;gap:12px;padding:12px 14px;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.sev{font:700 15px/1 'Barlow Condensed';padding:6px 0 5px;text-align:center;align-self:start;color:#fff;clip-path:polygon(0 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.sev.out{background:var(--red)}.sev.doubt{background:var(--yellow);color:var(--navy)}.sev.info{background:var(--blue)}
+.item b{font:700 22px/1 'Barlow Condensed'}
+.item div span{display:block;color:var(--muted);font-size:15px;margin-top:2px}
+footer{padding:36px 0 50px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><span class="logo">JSN</span><div><strong>Jim Sport News</strong><br><small>Where things are wrong</small></div></div></div>
+<div class="ticker"><b>LATEST</b><div class="track" id="track"></div></div>
+<header class="hero"><div class="wrap">
+  <span class="tag" id="tag"></span>
+  <h1 id="headline"></h1>
+  <p id="sub"></p>
+</div></header>
+<main class="wrap">
+  <section><h2>Scoreboard</h2><div class="score" id="score"></div></section>
+  <section><h2>Top stories</h2><div class="cards" id="cards"></div></section>
+  <section><h2>Luck check</h2><div class="luck" id="luck"></div></section>
+  <section><h2>Corrections and concerns</h2><div class="news" id="news"></div></section>
+</main>
+<footer class="wrap" id="foot"></footer>
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
+const aw = k => D.awards.find(a => a.key === k);
+const winners = a => a.winners;
+const fmt = a => a.key === 'template' ? a.value.toFixed(1) + '% owned' : a.key === 'milner' ? a.value.toFixed(1) + ' spread' : ['lucky','unlucky'].includes(a.key) ? sign(a.value) + ' vs group' : Math.round(a.value) + ' pts';
+const fmtR = (a, v) => a.key === 'template' ? v.toFixed(1) + '%' : a.key === 'milner' ? v.toFixed(1) : ['lucky','unlucky'].includes(a.key) ? sign(v) : Math.round(v);
+const list = a => a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a.slice(-1);
+
+const T = D.table, lead = T[0], gap = lead.points - T[1].points, luckiest = aw('lucky').winner;
+$('#tag').textContent = `Gameweek ${D.meta.latest_gw} reaction`;
+$('#headline').textContent = `${lead.manager} leads by ${gap}`;
+$('#sub').textContent = lead.manager === luckiest ? `${lead.manager} is also the luckiest in the group, ${sign(aw('lucky').value)} against the average.` : `${luckiest} is the luckiest in the group, ${sign(aw('lucky').value)} against the average.`;
+
+const groups = {};
+D.jsn.filter(i => i.severity !== 'info').forEach(i => { const k = i.kind + i.player + i.text; (groups[k] ||= {...i, who: []}).who.push(i.manager); });
+const news = Object.values(groups);
+const tick = news.map(g => `<span>${esc(g.player)}: ${esc(g.text)}. Owned by ${list(g.who)}</span>`).join('') || '<span>No team news</span>';
+$('#track').innerHTML = tick + tick;
+
+const max = Math.max(...T.map(r => r.points));
+$('#score').innerHTML = T.map(r => `<div class="row"><div class="rk">${r.rank}</div><div><div class="nm">${esc(r.manager)}<small>${esc(r.team)}</small></div><div class="bar"><i style="width:${r.points / max * 100}%"></i></div></div><div class="pt">${r.points}${r.hits ? `<span class="hit">−${r.hits} hit</span>` : ''}</div></div>`).join('');
+
+const order = ['milner','differential','lucky','unlucky','captain','regret','bench','template'];
+$('#cards').innerHTML = order.map(k => { const a = aw(k), w = winners(a), nx = a.ranking.find(r => !w.includes(r.manager) && r.eligible !== false);
+  return `<article class="card"><h3>${esc(a.title)}</h3><div class="win">${esc(w.join(' + '))}<span class="val">${fmt(a)}</span></div><p>${esc(a.blurb)}</p><div class="next">Next: <b>${esc(nx.manager)}</b> ${fmtR(a, nx.value)}</div></article>`; }).join('');
+
+const L = D.luck, lmax = Math.max(...Object.values(L).map(x => Math.abs(x.vs_group)));
+$('#luck').innerHTML = Object.entries(L).sort((a, b) => b[1].vs_group - a[1].vs_group).map(([n, x]) => { const w = Math.abs(x.vs_group) / lmax * 36, pos = x.vs_group >= 0;
+  return `<div class="lk"><div class="nm">${n}</div><div class="axis"><i style="${pos ? 'left:50%' : 'right:50%'};width:${w}%;background:${pos ? 'var(--blue)' : 'var(--red)'}"></i><em style="${pos ? `left:calc(50% + ${w}% + 6px)` : `right:calc(50% + ${w}% + 6px)`}">${sign(x.vs_group)}</em></div></div>`; }).join('') + `<p style="color:var(--muted);font-size:14px;margin:12px 0 0">Points above or below what each squad's chances deserved, compared with the group average.</p>`;
+
+$('#news').innerHTML = news.map(g => `<div class="item"><span class="sev ${g.severity}">${g.severity === 'out' ? 'OUT' : 'DOUBT'}</span><div><b>${esc(g.player)}</b><span>${esc(g.text)}. In the squads of ${list(g.who)}.</span></div></div>`).join('');
+$('#foot').textContent = `Updated ${D.meta.updated.slice(0, 10)}. ${D.meta.caveat_ownership}`;
+</script>
+</body>
+</html>

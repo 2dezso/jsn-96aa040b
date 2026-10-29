@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSN Dressing Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F7FAF8;--ink:#14281E;--muted:#587064;--pitch:#0B7A47;--card:#FFFFFF;--line:#D6E6DC;--wash:#EAF3ED;--out:#C8321F;--doubt:#B7790A;
+--Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Jack:#D6347F}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.45 Archivo,system-ui,sans-serif}
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.rail{background:var(--pitch);color:#fff;padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:20px}
+.brand strong{display:block;font-weight:900;font-stretch:125%;font-size:26px;letter-spacing:-.02em;line-height:1}
+.brand small{opacity:.8;font-size:13px}
+.tabs{display:flex;flex-direction:column;gap:2px}
+.tabs button{all:unset;cursor:pointer;padding:9px 12px;border-radius:7px;font-weight:600;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.tabs button:hover{background:rgba(255,255,255,.08)}
+.tabs button[aria-selected=true]{background:#fff;color:var(--pitch)}
+.tabs button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.tabs .n{font-size:12px;font-weight:700;background:rgba(255,255,255,.18);border-radius:99px;padding:1px 7px}
+.tabs button[aria-selected=true] .n{background:var(--wash)}
+.legend{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:13px;font-weight:600}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:9px;height:9px;border-radius:2px;flex:none}
+main{padding:28px 32px 60px;max-width:900px;width:100%}
+@media (max-width:760px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .rail{min-width:0}
+  .rail{position:sticky;height:auto;padding:12px 12px 10px;gap:10px;z-index:5}
+  .brand{display:flex;align-items:baseline;gap:10px}.brand strong{font-size:20px}
+  .tabs{flex-direction:row;overflow-x:auto;gap:4px;margin:0 -12px;padding:0 12px}
+  .tabs button{flex:none;padding:7px 11px;font-size:14px;gap:6px}
+  .legend{display:none}
+  main{padding:18px 16px 50px}
+}
+h1{font-weight:900;font-stretch:125%;font-size:clamp(28px,5vw,44px);letter-spacing:-.025em;line-height:1.02;margin:0}
+h2{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:-.015em;margin:0 0 4px}
+.sub{color:var(--muted);margin:8px 0 0;max-width:60ch}
+.panel[hidden]{display:none}
+.grid{display:grid;gap:12px;margin-top:20px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.wk{display:grid;grid-template-columns:120px 70px 1fr;gap:4px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.wk:first-child{border-top:0}
+.wk .who{font-weight:800;font-size:18px;display:flex;align-items:center;gap:8px}
+.wk .pts{font-weight:900;font-stretch:125%;font-size:30px;line-height:1}
+.wk .det{font-size:14px;color:var(--muted)}
+.wk .det b{color:var(--ink);font-weight:600}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:5px;padding:1px 7px;margin-left:4px;vertical-align:2px}
+.tag.w{background:var(--pitch);color:#fff}.tag.s{background:var(--wash);color:var(--muted)}
+@media (max-width:560px){.wk{grid-template-columns:1fr auto}.wk .det{grid-column:1/-1}}
+.cap{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+.cap div{flex:1;min-width:180px;border-top:4px solid var(--pitch);padding-top:8px}
+.cap .big{font-weight:900;font-stretch:125%;font-size:26px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.chips span{display:inline-flex;align-items:center;gap:5px;background:var(--wash);border-radius:5px;padding:2px 8px 2px 7px;font-size:13px;font-weight:600}
+.r{display:grid;grid-template-columns:56px 1fr 52px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
+.r b{font-weight:700;display:flex;align-items:center;gap:6px}
+.r .b{height:10px;background:var(--wash);border-radius:2px;overflow:hidden}
+.r .b i{display:block;height:100%}
+.r span:last-child{text-align:right;font-weight:700}
+.aw .title{font-weight:700;font-size:14px;margin:0}
+.aw .win{font-weight:900;font-stretch:125%;font-size:30px;letter-spacing:-.02em;line-height:1.05;margin:2px 0}
+.aw .blurb{font-size:14px;color:var(--muted);margin:0 0 10px}
+.dv{display:grid;grid-template-columns:56px 1fr;gap:10px;align-items:center;margin:7px 0;font-size:14px}
+.dv b{font-weight:700;display:flex;align-items:center;gap:6px}
+.ax{position:relative;height:22px;background:linear-gradient(var(--line),var(--line)) center/2px 100% no-repeat}
+.ax i{position:absolute;top:3px;bottom:3px;border-radius:2px}
+.ax em{position:absolute;top:0;line-height:22px;font-style:normal;font-weight:700;font-size:13px}
+.tbl{width:100%;border-collapse:collapse;font-size:15px}
+.tbl th{text-align:left;font-size:13px;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:2px solid var(--ink)}
+.tbl td{padding:10px 8px;border-bottom:1px solid var(--line)}
+.tbl td.num,.tbl th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tbl .tot{font-weight:900;font-stretch:125%;font-size:20px}
+.pitchwrap{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:20px;align-items:start;margin-top:20px}
+@media (max-width:760px){.pitchwrap{grid-template-columns:1fr}}
+.pitch{width:100%;max-width:340px;margin:0 auto;height:auto;border-radius:6px;display:block}
+.pitch text{font-family:Archivo,sans-serif}
+.flag{border:1px solid var(--line);border-left:5px solid var(--out);border-radius:0 10px 10px 0;background:var(--card);padding:12px 14px}
+.flag.doubt{border-left-color:var(--doubt)}
+.flag .st{font-weight:700;font-size:13px;color:var(--out)}.flag.doubt .st{color:var(--doubt)}
+.mini{list-style:none;margin:8px 0 0;padding:0;font-size:14px}
+.mini li{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-top:1px solid var(--line)}
+.pick{display:flex;gap:8px;align-items:center;margin-top:16px;max-width:420px}
+.pick select{font:600 16px Archivo;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:7px;padding:8px 10px;flex:1}
+.pick select:focus-visible{outline:3px solid var(--pitch);outline-offset:2px}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.vs>div{border-top:4px solid;padding-top:8px}
+.vs .big{font-weight:900;font-stretch:125%;font-size:40px;line-height:1}
+.vs p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.foot{color:var(--muted);font-size:13px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="rail">
+  <div class="brand"><strong>JSN</strong><small>Jim Sport News</small></div>
+  <div class="tabs" role="tablist" aria-label="Sections" id="tabs"></div>
+  <div class="legend" id="legend"></div>
+</aside>
+<main id="main"></main>
+</div>
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
+const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+const col = n => `var(--${n})`;
+const sw = n => `<i class="sw" style="background:${col(n)}"></i>`;
+const chip = n => `<span>${sw(n)}${n}</span>`;
+const list = a => a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a.slice(-1);
+const aw = k => D.awards.find(a => a.key === k);
+const GW = D.meta.latest_gw, T = D.table;
+const bars = (rows, f) => { const m = Math.max(...rows.map(r => Math.abs(r.value))) || 1;
+  return rows.map(r => `<div class="r"><b>${sw(r.manager)}${r.manager}</b><span class="b"><i style="width:${Math.max(3, Math.abs(r.value) / m * 100)}%;background:${col(r.manager)}"></i></span><span>${f(r.value)}</span></div>`).join(''); };
+const diverge = (rows, f) => { const m = Math.max(...rows.map(r => Math.abs(r.value))) || 1;
+  return rows.map(r => { const w = Math.abs(r.value) / m * 36, p = r.value >= 0;
+    return `<div class="dv"><b>${sw(r.manager)}${r.manager}</b><div class="ax"><i style="${p ? 'left:50%' : 'right:50%'};width:${w}%;background:${col(r.manager)}"></i><em style="${p ? `left:calc(50% + ${w}% + 6px)` : `right:calc(50% + ${w}% + 6px)`}">${f(r.value)}</em></div></div>`; }).join(''); };
+const groups = {};
+D.jsn.filter(i => i.severity !== 'info').forEach(i => { const k = i.kind + i.player + i.text; (groups[k] ||= {...i, who: []}).who.push(i.manager); });
+const NEWS = Object.values(groups);
+
+// ---- This week ----
+const wk = NAMES.map(n => ({n, ...D.weeks[n][GW]})).sort((a, b) => b.points - a.points);
+const winner = D.gw_winners[GW], caps = {};
+wk.forEach(w => { (caps[w.captain] ||= {pts: w.captain_pts, who: []}).who.push(w.n); });
+const capList = Object.entries(caps).sort((a, b) => b[1].pts - a[1].pts);
+const capLine = capList.length > 1 ? `${capList[0][0]} beat ${capList[capList.length - 1][0]} by ${capList[0][1].pts - capList[capList.length - 1][1].pts} on the armband.` : `Everyone captained ${capList[0][0]}.`;
+const thisWeek = `<h1>${list(winner.winners)} ${winner.winners.length > 1 ? 'share' : 'wins'} gameweek ${GW} with ${winner.top}</h1>
+<p class="sub">${list(winner.spoon)} ${winner.spoon.length > 1 ? 'take' : 'takes'} the wooden spoon with ${winner.low}. Points after hits.</p>
+<div class="grid"><div class="box">${wk.map(w => `<div class="wk"><div class="who">${sw(w.n)}${w.n}${winner.winners.includes(w.n) ? '<span class="tag w">Week winner</span>' : ''}${winner.spoon.includes(w.n) ? '<span class="tag s">Spoon</span>' : ''}</div><div class="pts">${w.points}</div><div class="det">Captain <b>${esc(w.captain)} ${w.captain_pts}</b>. Star <b>${esc(w.star)} ${w.star_pts}</b>. Bench <b>${w.bench_pts}</b>${w.hits ? `. Hit <b>−${w.hits}</b>` : ''}${w.chip ? `. Chip <b>${w.chip}</b>` : ''}</div></div>`).join('')}</div>
+<div class="box"><h2>The armband</h2><p class="sub" style="margin-top:0">${capLine}</p><div class="cap">${capList.map(([p, c]) => `<div><span class="big">${esc(p)} ${c.pts}</span><div class="chips">${c.who.map(chip).join('')}</div></div>`).join('')}</div></div></div>`;
+
+// ---- Table ----
+const pos = [[180, 62], [100, 180], [260, 180], [100, 298], [260, 298], [180, 408]];
+let svg = '<rect width="360" height="500" fill="#0B7A47"/>';
+for (let i = 0; i < 8; i++) svg += `<rect y="${i * 62.5}" width="360" height="31.25" fill="#0E8A52"/>`;
+svg += `<g fill="none" stroke="#fff" stroke-width="2" opacity=".85"><rect x="14" y="14" width="332" height="472"/><line x1="14" y1="250" x2="346" y2="250"/><circle cx="180" cy="250" r="42"/><rect x="95" y="14" width="170" height="62"/><rect x="95" y="424" width="170" height="62"/><rect x="140" y="14" width="80" height="26"/><rect x="140" y="460" width="80" height="26"/></g>`;
+svg += T.map((r, i) => { const [x, y] = pos[i]; return `<g><circle cx="${x}" cy="${y}" r="27" fill="${col(r.manager)}" stroke="#fff" stroke-width="${i ? 2 : 4}"/><text x="${x}" y="${y + 9}" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">${r.rank}</text><text x="${x}" y="${y + 47}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">${esc(r.manager)}</text><text x="${x}" y="${y + 63}" text-anchor="middle" font-size="12" fill="#fff">${r.points} pts</text></g>`; }).join('');
+const wins = n => Object.values(D.gw_winners).filter(g => g.winners.includes(n)).length;
+const table = `<h1>${esc(T[0].manager)} leads by ${T[0].points - T[1].points}</h1><p class="sub">${esc(T[T.length - 1].manager)} is in goal, ${T[0].points - T[T.length - 1].points} back.</p>
+<div class="pitchwrap"><svg class="pitch" viewBox="0 0 360 500" role="img" aria-label="League table as a formation">${svg}</svg>
+<div class="box" style="overflow-x:auto"><table class="tbl"><thead><tr><th></th><th>Manager</th><th class="num">GW${GW}</th><th class="num">Weeks won</th><th class="num">Hits</th><th class="num">Total</th></tr></thead><tbody>${T.map(r => `<tr><td>${r.rank}</td><td><b style="display:flex;align-items:center;gap:7px">${sw(r.manager)}${r.manager}</b><span style="font-size:13px;color:var(--muted)">${esc(r.team)}</span></td><td class="num">${r.gw_points}</td><td class="num">${wins(r.manager)}</td><td class="num">${r.hits ? '−' + r.hits : '0'}</td><td class="num tot">${r.points}</td></tr>`).join('')}</tbody></table></div></div>`;
+
+// ---- Awards ----
+const fmt = (a, v) => a.key === 'template' ? v.toFixed(1) + '%' : a.key === 'milner' ? v.toFixed(1) : ['lucky','unlucky'].includes(a.key) ? sign(v) : Math.round(v);
+const awards = `<h1>Season awards</h1><p class="sub">After gameweek ${GW}. Every ranking is open so you can see who was close.</p><div class="grid g2">${['milner','differential','lucky','unlucky','captain','regret','bench','template'].map(k => { const a = aw(k), rows = a.ranking.filter(r => r.eligible !== false);
+  return `<div class="box aw"><p class="title">${esc(a.title)}</p><div class="win">${a.winners.map(n => `<span style="color:${col(n)}">${n}</span>`).join(' + ')}</div><p class="blurb">${esc(a.blurb)}</p>${rows.length > 1 ? bars(rows, v => fmt(a, v)) : `<p class="blurb">Only ${rows[0].manager} is eligible right now.</p>`}</div>`; }).join('')}</div>`;
+
+// ---- Luck ----
+const L = Object.entries(D.luck).map(([manager, x]) => ({manager, value: x.vs_group, ...x})).sort((a, b) => b.value - a.value);
+const luck = `<h1>${esc(L[0].manager)} is riding it. ${esc(L[L.length - 1].manager)} is not.</h1><p class="sub">Points above or below what each squad's chances deserved, against the group average. Based on xG, xA and expected goals conceded.</p>
+<div class="grid"><div class="box">${diverge(L, sign)}</div></div><div class="grid g2">${L.map(x => `<div class="box"><h2 style="display:flex;align-items:center;gap:8px">${sw(x.manager)}${x.manager}</h2><ul class="mini">${x.lucky_players.slice(0, 2).map(p => `<li><span>${esc(p.player)}</span><b>${sign(p.pts)}</b></li>`).join('')}${x.unlucky_players.slice(0, 1).map(p => `<li><span>${esc(p.player)}</span><b>${sign(p.pts)}</b></li>`).join('')}</ul></div>`).join('')}</div>`;
+
+// ---- Transfers ----
+const tr = Object.entries(D.transfers);
+const transfers = `<h1>Transfer regret</h1><p class="sub">Points the players you bought scored, minus what the players you sold scored, while you'd have had them. Wildcards and Free Hits left out.</p>
+<div class="grid"><div class="box">${diverge(tr.map(([manager, v]) => ({manager, value: v.normal_net})).sort((a, b) => b.value - a.value), sign)}</div></div>
+<div class="grid g2">${tr.map(([n, v]) => `<div class="box"><h2 style="display:flex;align-items:center;gap:8px">${sw(n)}${n}<span style="margin-left:auto;font-size:16px">${sign(v.normal_net)}</span></h2><ul class="mini">${v.all.filter(t => !t.chip).map(t => `<li><span>GW${t.gw}: ${esc(t.in)} for ${esc(t.out)}</span><b>${sign(t.net)}</b></li>`).join('') || '<li>No transfers</li>'}</ul></div>`).join('')}</div>`;
+
+// ---- Team news ----
+const news = `<h1>Team news</h1><p class="sub">Things that look wrong in your squads before gameweek ${D.meta.next_gw}.</p><div class="grid">${NEWS.map(g => `<div class="flag ${g.severity}"><span class="st">${g.severity === 'out' ? 'Out' : 'Doubtful'}</span><h2>${esc(g.player)}</h2><p class="sub" style="margin-top:0">${esc(g.text)}</p><div class="chips">${g.who.map(chip).join('')}</div></div>`).join('')}</div>`;
+
+// ---- Versus ----
+const versus = `<h1>Head to head</h1><p class="sub">Pick two. Gameweeks won, how alike your teams are, and the players who made the difference.</p><div class="pick"><select id="sa" aria-label="First manager">${NAMES.map(n => `<option${n === 'Jim' ? ' selected' : ''}>${n}</option>`).join('')}</select><b>v</b><select id="sb" aria-label="Second manager">${NAMES.map(n => `<option${n === 'Dez' ? ' selected' : ''}>${n}</option>`).join('')}</select></div><div class="grid"><div class="box" id="vsout" aria-live="polite"></div></div>`;
+
+const TABS = [['week', 'This week', thisWeek], ['table', 'Table', table], ['awards', 'Awards', awards], ['luck', 'Luck', luck], ['transfers', 'Transfers', transfers], ['news', 'Team news', news, NEWS.length], ['versus', 'Versus', versus]];
+$('#tabs').innerHTML = TABS.map(([id, label, , n]) => `<button role="tab" id="t-${id}" aria-controls="p-${id}" aria-selected="false">${label}${n ? `<span class="n">${n}</span>` : ''}</button>`).join('');
+$('#main').innerHTML = TABS.map(([id, , html]) => `<section class="panel" role="tabpanel" id="p-${id}" aria-labelledby="t-${id}" hidden>${html}</section>`).join('') + `<p class="foot">Updated ${D.meta.updated.slice(0, 10)}. ${esc(D.meta.caveat_ownership)}</p>`;
+$('#legend').innerHTML = NAMES.map(chip).join('');
+
+function show(id) {
+  TABS.forEach(([t]) => { $(`#t-${t}`).setAttribute('aria-selected', t === id); $(`#p-${t}`).hidden = t !== id; });
+  history.replaceState(null, '', '#' + id);
+}
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { show(b.id.slice(2)); window.scrollTo(0, 0); } });
+show(TABS.some(([t]) => '#' + t === location.hash) ? location.hash.slice(1) : 'week');
+
+function renderVs() {
+  const a = $('#sa').value, b = $('#sb').value, out = $('#vsout');
+  if (a === b) { out.innerHTML = '<p class="sub">Pick two different managers.</p>'; return; }
+  const p = D.h2h[`${a}-${b}`] || D.h2h[`${b}-${a}`], w = p.wins;
+  out.innerHTML = `<div class="vs">${[a, b].map(n => `<div style="border-color:${col(n)}"><span class="big" style="color:${col(n)}">${w[n]}</span><p>${w[n] === 1 ? 'gameweek' : 'gameweeks'} won by ${n}. Season: ${p.points[n]}.</p><ul class="mini">${p.decided_by[n].map(d => `<li><span>${esc(d.player)}</span><b>${d.pts}</b></li>`).join('')}</ul></div>`).join('')}</div><p class="sub">${w.draw ? `${w.draw} drawn. ` : ''}Their XIs share ${p.xi_overlap}% of players on average. The lists show points from players only one of them started.</p>`;
+}
+$('#sa').addEventListener('change', renderVs); $('#sb').addEventListener('change', renderVs); renderVs();
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+/* Manager rating cards and profile. Everything is scoped to .ratings. Condensed Archivo stands in for card numerals. */
+.ratings{container-type:inline-size}
+.ratings .cd{font-family:Archivo,sans-serif;font-stretch:62%;font-weight:900}
+.ratings .rt-deck{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@container (min-width:420px){.ratings .rt-deck{grid-template-columns:repeat(3,1fr)}}
+@container (min-width:760px){.ratings .rt-deck{grid-template-columns:repeat(6,1fr)}}
+.ratings .rt-card{all:unset;box-sizing:border-box;cursor:pointer;position:relative;aspect-ratio:3/4.2;border-radius:12px;color:#fff;padding:12px;display:flex;flex-direction:column;overflow:hidden;background:var(--c);transition:transform .15s}
+.ratings .rt-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+ radial-gradient(circle at 50% 108%,transparent 48px,rgba(255,255,255,.16) 49px,rgba(255,255,255,.16) 51px,transparent 52px),
+ linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.16)) 50% 100%/2px 28% no-repeat}
+.ratings .rt-card:hover{transform:translateY(-3px)}
+.ratings .rt-card[aria-pressed=true]{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--ink)}
+.ratings .rt-card:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+@media (prefers-reduced-motion:reduce){.ratings .rt-card{transition:none}.ratings .rt-card:hover{transform:none}}
+.ratings .rt-ovr{font-size:52px;line-height:.85}
+.ratings .rt-sty{font-size:11px;font-weight:700;opacity:.92;margin-top:4px;line-height:1.2}
+.ratings .rt-nm{font-size:38px;line-height:.9;margin-top:auto}
+.ratings .rt-tm{font-size:11px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ratings .rt-at{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 4px;margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.35);font-size:10.5px;font-weight:600}
+.ratings .rt-at b{font-family:Archivo,sans-serif;font-stretch:62%;font-weight:900;font-size:16px;margin-right:2px}
+.ratings .rt-profile{background:var(--card);border-radius:14px;margin-top:16px;display:grid;grid-template-columns:1fr;overflow:hidden;border:1px solid var(--line);scroll-margin-top:80px}
+@container (min-width:640px){.ratings .rt-profile{grid-template-columns:240px 1fr}}
+.ratings .rt-side{background:var(--c);color:#fff;padding:20px}
+.ratings .rt-side .rt-ovr{font-size:100px}
+.ratings .rt-side .rt-nm{font-size:58px;margin-top:8px}
+.ratings .rt-side p{margin:6px 0 0;opacity:.94;font-size:15px}
+.ratings .rt-styl{display:inline-block;margin-top:14px;background:rgba(255,255,255,.2);border-radius:6px;padding:4px 10px;font-weight:700;font-size:14px}
+.ratings .rt-body{padding:20px;display:grid;gap:22px}
+.ratings .rt-body h3{font-family:Archivo,sans-serif;font-stretch:125%;font-weight:900;font-size:18px;letter-spacing:-.01em;margin:0 0 8px}
+.ratings .rt-attr{display:grid;grid-template-columns:100px 34px 1fr;gap:4px 10px;align-items:center;margin:8px 0;font-size:14px}
+.ratings .rt-attr b{font-family:Archivo,sans-serif;font-stretch:62%;font-weight:900;font-size:24px;text-align:right}
+.ratings .rt-bar{height:10px;background:var(--wash);border-radius:3px;overflow:hidden}
+.ratings .rt-bar i{display:block;height:100%}
+.ratings .rt-attr small{grid-column:3;color:var(--muted);font-size:13px;margin-top:-2px}
+.ratings .rt-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.ratings .rt-fact{background:var(--wash);border-radius:10px;padding:12px}
+.ratings .rt-fact span{display:block;font-size:13px;color:var(--muted)}
+.ratings .rt-fact b{display:block;font-family:Archivo,sans-serif;font-stretch:62%;font-weight:900;font-size:32px;line-height:1.05}
+.ratings .rt-fact em{font-style:normal;font-size:14px}
+.ratings .rt-badges{display:flex;flex-wrap:wrap;gap:6px}
+.ratings .rt-badges span{border:1.5px solid var(--ink);border-radius:6px;padding:3px 10px;font-weight:700;font-size:14px}
+.ratings .rt-sig{list-style:none;margin:0;padding:0}
+.ratings .rt-sig li{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--line)}
+.ratings .rt-sig b{font-family:Archivo,sans-serif;font-stretch:62%;font-weight:900;font-size:20px}
+.ratings .rt-how{color:var(--muted);font-size:13px;margin:14px 0 0;max-width:72ch}

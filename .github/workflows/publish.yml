@@ -1,0 +1,49 @@
+# Pull fresh FPL data, rebuild the site and publish it to GitHub Pages.
+# Runs every morning (covers "after the gameweek" and "before the deadline"), on every push, and by hand.
+name: Publish
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # finished gameweeks never change, so keep the raw API responses between runs
+      - uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: fpl-raw-${{ github.run_id }}
+          restore-keys: fpl-raw-
+      - run: python pipeline/build.py
+      - run: python site/build.py
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

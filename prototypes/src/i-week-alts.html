@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSN This Week</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F7FAF8;--ink:#14281E;--muted:#587064;--pitch:#0B7A47;--card:#FFFFFF;--line:#D6E6DC;--wash:#EAF3ED;--out:#C8321F;
+--Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Jack:#D6347F}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.45 Archivo,system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+.switch{display:flex;gap:6px;flex-wrap:wrap;padding:10px 0 18px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.switch button{all:unset;cursor:pointer;font-weight:700;font-size:14px;padding:7px 12px;border-radius:7px;border:1px solid var(--line);background:var(--card)}
+.switch button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.switch button:focus-visible{outline:3px solid var(--pitch);outline-offset:2px}
+.switch p{flex-basis:100%;margin:6px 0 0;font-size:14px;color:var(--muted)}
+h1{font-weight:900;font-stretch:125%;font-size:clamp(28px,6vw,42px);letter-spacing:-.025em;line-height:1.02;margin:0}
+.sub{color:var(--muted);margin:8px 0 0;max-width:60ch}
+.sw{display:inline-block;width:9px;height:9px;border-radius:2px;flex:none}
+.link{display:inline-block;margin-top:14px;font-weight:700;color:var(--pitch);text-decoration:none}
+.link:hover{text-decoration:underline}
+.num{font-weight:900;font-stretch:125%;font-variant-numeric:tabular-nums}
+.g{color:var(--pitch)}.r{color:var(--out)}.m{color:var(--muted)}
+
+/* A: scoreboard */
+.sb{list-style:none;margin:24px 0 0;padding:0}
+.sb li{display:grid;grid-template-columns:22px 1fr auto;gap:2px 12px;align-items:baseline;padding:14px 0;border-top:1px solid var(--line)}
+.sb .rk{color:var(--muted);font-weight:700;font-size:14px}
+.sb .nm{font-weight:800;font-size:18px;display:flex;align-items:center;gap:8px}
+.sb .pt{font-size:32px;line-height:1;grid-row:span 2;align-self:center}
+.sb .ln{grid-column:2;font-size:14px;color:var(--muted)}
+.sb .ln b{font-weight:700;color:var(--ink)}
+.aside{margin-top:22px;font-size:15px;color:var(--muted)}
+.aside b{color:var(--ink)}
+
+/* B: winner + table */
+.hero{display:flex;gap:18px;align-items:center;margin-top:24px;padding:18px 0;border-top:4px solid var(--c);border-bottom:1px solid var(--line)}
+.hero .num{font-size:72px;line-height:.85;color:var(--c)}
+.hero p{margin:2px 0 0;color:var(--muted)}
+.tbl{width:100%;border-collapse:collapse;margin-top:18px;font-size:15px}
+.tbl th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:6px 6px;border-bottom:1px solid var(--ink)}
+.tbl td{padding:11px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl .n{text-align:right}
+.tbl td.pl small{color:var(--muted);margin-left:4px;font-weight:700}.tbl td.pl small.g{color:var(--pitch)}.tbl td.pl small.r{color:var(--out)}
+@media (max-width:560px){.tbl .hide{display:none}}
+
+/* C: three players */
+.strip{display:flex;height:44px;margin-top:24px;gap:3px}
+.strip div{flex:var(--v);background:var(--c);color:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;min-width:0;overflow:hidden}
+.strip-k{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px}
+.trio{display:grid;gap:0;margin-top:30px}
+.trio section{display:grid;grid-template-columns:104px 1fr;gap:0 18px;padding:18px 0;border-top:1px solid var(--line)}
+.trio .k{grid-column:2;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.trio .num{font-size:56px;line-height:.9;grid-row:span 3;text-align:right}
+.trio h2{grid-column:2;font-weight:900;font-stretch:125%;font-size:26px;letter-spacing:-.02em;margin:0;line-height:1.1}
+.trio p{grid-column:2;margin:2px 0 0;color:var(--muted);font-size:15px}
+.foot{margin-top:24px;font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<main>
+<div class="switch" role="group" aria-label="Alternate layouts" id="switch"></div>
+<div id="out" aria-live="polite"></div>
+</main>
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const minus = n => n < 0 ? '−' + -n : n;
+const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+const col = n => `var(--${n})`;
+const sw = n => `<i class="sw" style="background:${col(n)}"></i>`;
+const list = a => a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a.slice(-1);
+const GW = D.meta.latest_gw;
+const wk = NAMES.map(n => ({n, ...D.weeks[n][GW]})).sort((a, b) => b.points - a.points);
+const win = D.gw_winners[GW];
+const lead = wk[0];
+const owners = (k, p) => wk.filter(w => w[k] === p).map(w => w.n);
+const pick = (k, better) => { const b = wk.reduce((a, w) => better(w[k + '_pts'], a[k + '_pts']) ? w : a); return {player: b[k], pts: b[k + '_pts'], who: owners(k, b[k])}; };
+const potw = pick('star', (a, b) => a > b), fotw = pick('flop', (a, b) => a < b);
+// the best "good" player that isn't already the player of the week
+const solid = wk.filter(w => w.good !== potw.player).reduce((a, w) => w.good_pts > a.good_pts ? w : a);
+const benchKing = wk.reduce((a, w) => w.bench_pts > a.bench_pts ? w : a);
+const hitters = wk.filter(w => w.hits);
+const headline = `<h1>${list(win.winners)} ${win.winners.length > 1 ? 'share' : 'wins'} gameweek ${GW} with ${win.top}</h1>`;
+const stories = `<a class="link" href="g-stories.html">Watch gameweek ${GW} in stories →</a>`;
+const extras = `<b>${benchKing.n}</b> left ${benchKing.bench_pts} on the bench.${hitters.length ? ` ${hitters.map(w => `<b>${w.n}</b> took a −${w.hits}`).join(', ')}.` : ' No hits.'}`;
+
+const V = {
+  A: ['Scoreboard', 'One ranked list. Each manager gets a single line for top, good and flop, with bench and hit at the end.', () => `${headline}
+<p class="sub">${esc(potw.player)} was the player of the week with ${potw.pts}. ${esc(fotw.player)} was the flop.</p>${stories}
+<ol class="sb">${wk.map((w, i) => `<li><span class="rk">${i + 1}</span><span class="nm">${sw(w.n)}${w.n}</span><span class="pt num"${win.winners.includes(w.n) ? ` style="color:${col(w.n)}"` : ''}>${w.points}</span>
+<span class="ln"><b class="g">${esc(w.star)} ${w.star_pts}</b> · <b>${esc(w.good)} ${w.good_pts}</b> · <b class="r">${esc(w.flop)} ${minus(w.flop_pts)}</b> &nbsp; Bench ${w.bench_pts}${w.hits ? `, hit <span class="r">−${w.hits}</span>` : ''}</span></li>`).join('')}</ol>`],
+
+  B: ['Winner + table', 'The winner gets the spotlight. Everything else is a plain table, coloured only where it matters.', () => `<h1>Gameweek ${GW}</h1>
+<div class="hero" style="--c:${col(lead.n)}"><span class="num">${lead.points}</span><div><b style="font-size:22px">${list(win.winners)} ${win.winners.length > 1 ? 'share' : 'wins'} the week</b><p>${esc(lead.star)} ${lead.star_pts}, ${esc(lead.good)} ${lead.good_pts}${lead.hits ? `, even after a −${lead.hits} hit` : ''}. ${list(win.spoon)} ${win.spoon.length > 1 ? 'take' : 'takes'} the spoon with ${win.low}.</p></div></div>
+<table class="tbl"><thead><tr><th></th><th class="n">Pts</th><th>Top</th><th class="hide">Good</th><th>Flop</th><th class="n hide">Bench</th><th class="n hide">Hit</th></tr></thead><tbody>${wk.map(w => `<tr><td><b style="display:flex;align-items:center;gap:7px">${sw(w.n)}${w.n}</b></td><td class="n num" style="font-size:20px">${w.points}</td><td class="pl">${esc(w.star)}<small class="g">${w.star_pts}</small></td><td class="pl hide">${esc(w.good)}<small>${w.good_pts}</small></td><td class="pl">${esc(w.flop)}<small class="r">${minus(w.flop_pts)}</small></td><td class="n hide">${w.bench_pts}</td><td class="n hide${w.hits ? ' r' : ' m'}">${w.hits ? '−' + w.hits : '–'}</td></tr>`).join('')}</tbody></table>${stories}`],
+
+  C: ['Three players', 'Scores collapse to one strip. The page is about the three players who made the week.', () => `${headline}
+<div class="strip" role="img" aria-label="${wk.map(w => `${w.n} ${w.points}`).join(', ')}">${wk.map(w => `<div style="--v:${w.points};--c:${col(w.n)}">${w.n} ${w.points}</div>`).join('')}</div>
+<div class="strip-k"><span>Highest</span><span>Lowest</span></div>
+<div class="trio">
+<section><span class="num g">${potw.pts}</span><span class="k g">Player of the week</span><h2>${esc(potw.player)}</h2><p>Owned by ${list(potw.who)}.</p></section>
+<section><span class="num">${solid.good_pts}</span><span class="k m">Did the job</span><h2>${esc(solid.good)}</h2><p>Owned by ${list(owners('good', solid.good))}.</p></section>
+<section><span class="num r">${minus(fotw.pts)}</span><span class="k r">Flop of the week</span><h2>${esc(fotw.player)}</h2><p>Started by ${list(fotw.who)}.</p></section>
+</div><p class="foot">${extras}</p>${stories}`],
+};
+
+const keys = Object.keys(V);
+function show(k) {
+  $('#switch').innerHTML = keys.map(x => `<button aria-pressed="${x === k}" data-k="${x}">${x}. ${V[x][0]}</button>`).join('') + `<p>${V[k][1]}</p>`;
+  $('#out').innerHTML = V[k][2]();
+  history.replaceState(null, '', '#' + k);
+}
+$('#switch').addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(b.dataset.k); });
+show(keys.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'A');
+</script>
+</body>
+</html>

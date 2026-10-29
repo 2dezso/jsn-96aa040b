@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSN Ratings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Archivo:wdth,wght@100,400..800&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F1F4F2;--ink:#14281E;--muted:#587064;--line:#D3E0D8;--card:#fff;--pitch:#0B7A47;
+--Jim:#E4572E;--Ash:#6C4FD8;--Haz:#0E9F8E;--Cal:#C28500;--Dez:#2A7DE1;--Jack:#D6347F}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.45 Archivo,system-ui,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.disp{font-family:'Big Shoulders Display',sans-serif}
+header{padding:26px 0 8px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+header h1{font-family:'Big Shoulders Display';font-weight:900;font-size:clamp(44px,8vw,80px);line-height:.9;margin:0;letter-spacing:.005em}
+header p{margin:0;color:var(--muted);max-width:40ch;font-size:15px}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;padding:18px 0 8px}
+.pc{all:unset;cursor:pointer;position:relative;aspect-ratio:3/4.2;border-radius:14px;color:#fff;padding:14px;display:flex;flex-direction:column;overflow:hidden;background:var(--c);box-shadow:0 0 0 0 var(--ink);transition:transform .15s,box-shadow .15s}
+.pc::before{content:"";position:absolute;inset:0;background:
+ radial-gradient(circle at 50% 108%,transparent 54px,rgba(255,255,255,.16) 55px,rgba(255,255,255,.16) 57px,transparent 58px),
+ linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.16)) 50% 100%/2px 30% no-repeat;pointer-events:none}
+.pc:hover{transform:translateY(-3px)}
+.pc[aria-pressed=true]{box-shadow:0 0 0 4px var(--paper),0 0 0 7px var(--ink)}
+.pc:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+.pc .ovr{font-family:'Big Shoulders Display';font-weight:900;font-size:58px;line-height:.85}
+.pc .sty{font-size:12px;font-weight:700;opacity:.9;margin-top:4px}
+.pc .nm{font-family:'Big Shoulders Display';font-weight:900;font-size:40px;line-height:.9;margin-top:auto}
+.pc .tm{font-size:11px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc .at{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px 6px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.35);font-size:12px}
+.pc .at span b{font-family:'Big Shoulders Display';font-size:17px;font-weight:800;margin-right:3px}
+@media (prefers-reduced-motion:reduce){.pc{transition:none}.pc:hover{transform:none}}
+.profile{background:var(--card);border-radius:16px;margin:18px 0 10px;display:grid;grid-template-columns:300px 1fr;overflow:hidden;border:1px solid var(--line)}
+@media (max-width:780px){.profile{grid-template-columns:1fr}}
+.side{background:var(--c);color:#fff;padding:22px;position:relative}
+.side .ovr{font-family:'Big Shoulders Display';font-weight:900;font-size:110px;line-height:.8}
+.side .nm{font-family:'Big Shoulders Display';font-weight:900;font-size:64px;line-height:.9;margin-top:10px}
+.side p{margin:6px 0 0;opacity:.92}
+.side .styl{display:inline-block;margin-top:14px;background:rgba(255,255,255,.2);border-radius:6px;padding:4px 10px;font-weight:700;font-size:14px}
+.body{padding:22px;display:grid;gap:22px}
+.body h2{font-family:'Big Shoulders Display';font-weight:800;font-size:26px;margin:0 0 8px;line-height:1}
+.attr{display:grid;grid-template-columns:110px 40px 1fr;gap:10px;align-items:center;margin:7px 0;font-size:14px}
+.attr b{font-family:'Big Shoulders Display';font-size:24px;font-weight:800;text-align:right}
+.attr .bar{height:10px;background:var(--paper);border-radius:3px;overflow:hidden}
+.attr .bar i{display:block;height:100%}
+.attr small{grid-column:3;color:var(--muted);margin-top:-6px;font-size:13px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.fact{background:var(--paper);border-radius:10px;padding:12px}
+.fact span{display:block;font-size:13px;color:var(--muted)}
+.fact b{display:block;font-family:'Big Shoulders Display';font-size:30px;font-weight:800;line-height:1.05}
+.fact em{font-style:normal;font-size:14px}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badges span{border:1.5px solid var(--ink);border-radius:6px;padding:3px 10px;font-weight:700;font-size:14px}
+.sig{list-style:none;margin:0;padding:0}
+.sig li{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--line)}
+.sig li b{font-family:'Big Shoulders Display';font-size:20px;font-weight:800}
+.how{color:var(--muted);font-size:13px;padding:6px 0 40px;max-width:72ch}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>JSN ratings</h1>
+  <p>Six managers rated out of 99 against each other after gameweek <span id="gw"></span>. Tap a card to see the full profile.</p>
+</header>
+<div class="deck" id="deck"></div>
+<section class="profile" id="profile" aria-live="polite"></section>
+<p class="how" id="how"></p>
+</div>
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sign = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(Math.round(n));
+const NAMES = ['Jim','Ash','Haz','Cal','Dez','Jack'];
+const M = Object.fromEntries(D.table.map(r => [r.manager, r]));
+$('#gw').textContent = D.meta.latest_gw;
+
+// Each attribute is scaled within the group: best of the six = 95, worst = 60.
+const ATTR = [
+  {k: 'CAP', name: 'Captaincy', style: 'Armband specialist', raw: n => M[n].metrics.cap_pts, say: v => `${Math.round(v)} points from the armband`},
+  {k: 'SCT', name: 'Scouting', style: 'Scout', raw: n => M[n].metrics.diff_global, say: v => `${Math.round(v)} points from players under 10% owned`},
+  {k: 'MKT', name: 'Transfers', style: 'Wheeler-dealer', raw: n => D.transfers[n].normal_net, say: v => `${sign(v)} net from transfers`},
+  {k: 'SEL', name: 'Selection', style: 'Selector', raw: n => -M[n].metrics.bench, say: v => `${Math.round(-v)} points left on the bench`},
+  {k: 'CON', name: 'Consistency', style: 'Metronome', raw: n => -M[n].metrics.spread, say: v => `${(-v).toFixed(1)} point weekly spread`},
+  {k: 'LUK', name: 'Luck', style: 'Chancer', raw: n => D.luck[n].vs_group, say: v => `${sign(v)} against the group's luck`},
+];
+const R = {};
+NAMES.forEach(n => R[n] = {attrs: {}});
+ATTR.forEach(a => { const vals = NAMES.map(a.raw), lo = Math.min(...vals), hi = Math.max(...vals);
+  NAMES.forEach(n => { const v = a.raw(n); R[n].attrs[a.k] = {score: hi === lo ? 78 : Math.round(60 + 35 * (v - lo) / (hi - lo)), raw: v}; }); });
+NAMES.forEach(n => { const s = ATTR.map(a => R[n].attrs[a.k].score);
+  R[n].ovr = Math.round(s.reduce((x, y) => x + y, 0) / s.length);
+  R[n].style = ATTR.reduce((b, a) => R[n].attrs[a.k].score > R[n].attrs[b.k].score ? a : b).style; });
+
+function nemesis(n) {
+  let worst = null, best = null;
+  NAMES.filter(o => o !== n).forEach(o => { const p = D.h2h[`${n}-${o}`] || D.h2h[`${o}-${n}`], d = p.wins[o] - p.wins[n];
+    if (!worst || d > worst.d) worst = {o, d, me: p.wins[n], them: p.wins[o]};
+    if (!best || d < best.d) best = {o, d, me: p.wins[n], them: p.wins[o]}; });
+  return {worst, best};
+}
+
+const card = n => `<button class="pc" style="--c:${`var(--${n})`}" data-n="${n}" aria-pressed="false" aria-label="${n}, rated ${R[n].ovr}"><span class="ovr">${R[n].ovr}</span><span class="sty">${R[n].style}</span><span class="nm">${n}</span><span class="tm">${esc(M[n].team)}</span><span class="at">${ATTR.map(a => `<span><b>${R[n].attrs[a.k].score}</b>${a.k}</span>`).join('')}</span></button>`;
+const order = [...NAMES].sort((a, b) => R[b].ovr - R[a].ovr);
+$('#deck').innerHTML = order.map(card).join('');
+
+function profile(n) {
+  document.querySelectorAll('.pc').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === n));
+  const r = R[n], w = D.weeks[n], gws = Object.entries(w), best = gws.reduce((a, b) => b[1].points > a[1].points ? b : a), worst = gws.reduce((a, b) => b[1].points < a[1].points ? b : a);
+  const nm = nemesis(n), held = D.awards.filter(a => a.winners.includes(n)).map(a => a.title);
+  const p = $('#profile'); p.style.setProperty('--c', `var(--${n})`);
+  p.innerHTML = `<div class="side"><div class="ovr">${r.ovr}</div><div class="nm">${n}</div><p>${esc(M[n].team)}</p><p>${ordinal(M[n].rank)} in the group on ${M[n].points} points.</p><span class="styl">Plays as: ${r.style}</span></div>
+  <div class="body">
+    <div><h2>Attributes</h2>${ATTR.map(a => `<div class="attr"><span>${a.name}</span><b>${r.attrs[a.k].score}</b><span class="bar"><i style="width:${(r.attrs[a.k].score - 50) * 2}%;background:var(--${n})"></i></span><small>${a.say(r.attrs[a.k].raw)}</small></div>`).join('')}</div>
+    <div class="facts">
+      <div class="fact"><span>Best week</span><b>${best[1].points}</b><em>Gameweek ${best[0]}, ${esc(best[1].star)} ${best[1].star_pts}</em></div>
+      <div class="fact"><span>Worst week</span><b>${worst[1].points}</b><em>Gameweek ${worst[0]}</em></div>
+      <div class="fact"><span>Nemesis</span><b style="color:var(--${nm.worst.o})">${nm.worst.d > 0 ? nm.worst.o : 'None yet'}</b><em>${nm.worst.d > 0 ? `Beats ${n} ${nm.worst.them} weeks to ${nm.worst.me}` : `Nobody has beaten ${n} more often than not`}</em></div>
+      <div class="fact"><span>Owns</span><b style="color:var(--${nm.best.o})">${nm.best.d < 0 ? nm.best.o : 'Nobody'}</b><em>${nm.best.d < 0 ? `${n} wins ${nm.best.me} weeks to ${nm.best.them}` : 'No clear victim yet'}</em></div>
+    </div>
+    <div><h2>Signature players</h2><ul class="sig">${D.signature[n].map(s => `<li><span>${esc(s.player)}</span><b>${s.pts}</b></li>`).join('')}</ul></div>
+    <div><h2>Trophy cabinet</h2><div class="badges">${held.length ? held.map(t => `<span>${esc(t)}</span>`).join('') : '<span style="border-style:dashed;color:var(--muted)">Empty, for now</span>'}</div></div>
+  </div>`;
+}
+const ordinal = k => k + (['th','st','nd','rd'][(k % 100 - 20) % 10] || ['th','st','nd','rd'][k % 100] || 'th');
+$('#deck').addEventListener('click', e => { const b = e.target.closest('.pc'); if (b) { profile(b.dataset.n); $('#profile').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth', block: 'start'}); } });
+profile(order[0]);
+$('#how').textContent = `How ratings work: each attribute is scored against the other five, so 95 is the best in the group and 60 the worst. The overall is the average of the six. Playing style is your highest attribute. ${D.meta.caveat_ownership}`;
+</script>
+</body>
+</html>
