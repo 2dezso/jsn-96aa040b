@@ -230,8 +230,8 @@ function show(id) {
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { show(b.id.slice(2)); window.scrollTo(0, 0); } });
 
-// stories play inline on the This week tab, only while it's showing
-JSNStories.mount($('#weekstories'), D, {autoplay: 5000, isActive: () => !$('#p-week').hidden});
+// stories sit inline on the This week tab; arrow keys only act while it's showing
+JSNStories.mount($('#weekstories'), D, {isActive: () => !$('#p-week').hidden});
 
 const start = location.hash.slice(1);
 show(TABS.some(([t]) => t === start) ? start : 'week');

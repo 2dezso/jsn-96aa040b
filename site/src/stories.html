@@ -22,13 +22,12 @@ body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.4 Archivo
 <body>
 <div class="top"><b>JSN</b><a href="./">Open the full JSN app</a></div>
 <div id="root"></div>
-<p class="hint">Tap the right side for the next story, the left to go back. Every slide is sized to screenshot straight into the group chat.</p>
+<p class="hint">Swipe or tap the right side for the next story, the left to go back. Every slide is sized to screenshot straight into the group chat.</p>
 <script>
 const D = __DATA__;
 /*@include stories.js*/
 JSNStories.mount(document.getElementById('root'), D, {
   start: parseInt(location.hash.slice(1)) || 1,  // #3 opens the third slide
-  autoplay: 5000,
   onChange: n => history.replaceState(null, '', '#' + n),
 });
 </script>

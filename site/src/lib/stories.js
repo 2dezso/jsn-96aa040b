@@ -54,46 +54,42 @@ window.JSNStories = (() => {
     const S = build(D), GW = D.meta.latest_gw;
     let i = Math.min(S.length - 1, Math.max(0, (opts.start || 1) - 1));
     root.classList.add('stories');
-    // opts.autoplay = ms per slide; loops, pauses on hover, when hidden, or with the Pause button. Slides swap
-    // without animating, so it runs under reduced motion too.
-    const dur = opts.autoplay || 0, canPlay = dur > 0;
-    let playing = canPlay, hover = false, elapsed = 0, last = null;
-    root.innerHTML = `<div class="st-stage"><div class="st-bars" aria-hidden="true">${S.map(() => '<i><b></b></i>').join('')}</div><div class="st-slot" aria-live="${canPlay ? 'off' : 'polite'}"></div><div class="st-nav"><button class="st-prev">Previous</button><span class="st-count"></span>${canPlay ? '<button class="st-play">Pause</button>' : ''}<button class="st-next">Next</button></div></div>`;
-    const q = s => root.querySelector(s), fills = [...root.querySelectorAll('.st-bars b')];
+    // move between slides by swiping (touch or mouse drag), tapping a side, or the arrow keys
+    root.innerHTML = `<div class="st-stage"><div class="st-bars" aria-hidden="true">${S.map(() => '<i><b></b></i>').join('')}</div><div class="st-slot" tabindex="0" aria-live="polite" aria-label="Gameweek stories. Use the left and right arrow keys to move between slides."></div><p class="st-hint"><span class="st-count"></span><span>Swipe for more</span></p></div>`;
+    const q = s => root.querySelector(s), slot = q('.st-slot'), fills = [...root.querySelectorAll('.st-bars b')];
     function render() {
       const s = S[i];
-      q('.st-slot').innerHTML = `<div class="st-slide${s.light ? ' st-light' : ''}" style="--bg:${s.bg}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${S.length}">${s.inner}<div class="st-foot"><b>JSN</b><span>Jim Sport News, gameweek ${GW}</span></div><span class="st-zone"></span></div>`;
-      elapsed = 0;
-      fills.forEach((b, k) => { b.style.transform = `scaleX(${k < i ? 1 : 0})`; });
+      slot.innerHTML = `<div class="st-slide${s.light ? ' st-light' : ''}" style="--bg:${s.bg}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${S.length}">${s.inner}<div class="st-foot"><b>JSN</b><span>Jim Sport News, gameweek ${GW}</span></div><span class="st-zone"></span></div>`;
+      fills.forEach((b, k) => { b.style.transform = `scaleX(${k <= i ? 1 : 0})`; });
       q('.st-count').textContent = `${i + 1} of ${S.length}`;
-      q('.st-prev').disabled = i === 0;
-      q('.st-next').disabled = i === S.length - 1 && !playing;
       if (opts.onChange) opts.onChange(i + 1);
     }
-    const go = d => { i = Math.min(S.length - 1, Math.max(0, i + d)); render(); };
-    if (canPlay) {
-      const active = () => !document.hidden && !hover && (!opts.isActive || opts.isActive());
-      // a plain timer, not animation frames: those get throttled or stopped in some browsers
-      setInterval(() => {
-        const t = performance.now();
-        if (playing && active()) {
-          if (last !== null) elapsed += t - last;
-          last = t;
-          if (elapsed >= dur) { i = (i + 1) % S.length; render(); }
-          fills[i].style.transform = `scaleX(${Math.min(1, elapsed / dur)})`;
-        } else last = null;
-      }, 100);
-      q('.st-slot').addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hover = true; });
-      q('.st-slot').addEventListener('pointerleave', () => { hover = false; });
-      q('.st-play').addEventListener('click', e => { playing = !playing; e.target.textContent = playing ? 'Pause' : 'Play'; q('.st-next').disabled = i === S.length - 1 && !playing; });
-    }
-    const next = () => (playing && i === S.length - 1 ? (i = 0, render()) : go(1));
-    q('.st-slot').addEventListener('click', e => (e.target.closest('.st-zone') ? go(-1) : next()));
-    q('.st-prev').addEventListener('click', () => go(-1));
-    q('.st-next').addEventListener('click', next);
+    const go = d => { const n = Math.min(S.length - 1, Math.max(0, i + d)); if (n !== i) { i = n; render(); } };
+    // the slide follows the finger; past 50px sideways it changes, otherwise it springs back
+    let x0 = null, y0 = 0, dx = 0, swiped = false;
+    slot.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; dx = 0; swiped = false; });
+    slot.addEventListener('pointermove', e => {
+      if (x0 === null) return;
+      dx = e.clientX - x0;
+      if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - y0)) {
+        swiped = true;
+        const edge = (dx > 0 && i === 0) || (dx < 0 && i === S.length - 1);
+        slot.firstChild.style.transform = `translateX(${edge ? dx / 4 : dx}px)`;
+      }
+    });
+    const end = () => {
+      if (x0 === null) return;
+      x0 = null;
+      if (swiped && Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+      else if (slot.firstChild) slot.firstChild.style.transform = '';
+    };
+    slot.addEventListener('pointerup', end);
+    slot.addEventListener('pointercancel', end);
+    slot.addEventListener('pointerleave', end);
+    slot.addEventListener('click', e => { if (!swiped) go(e.target.closest('.st-zone') ? -1 : 1); });
     document.addEventListener('keydown', e => {
       if (opts.isActive && !opts.isActive()) return;
-      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowRight') go(1);
       if (e.key === 'ArrowLeft') go(-1);
     });
     render();
