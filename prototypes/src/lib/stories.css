@@ -1,9 +1,9 @@
-/* Gameweek stories: shared by the standalone page and the app overlay. Everything is scoped to .stories. */
+/* Gameweek stories: shared by the standalone page and the This week tab. Everything is scoped to .stories. */
 .stories{font-family:Archivo,system-ui,sans-serif}
 .stories .st-stage{width:min(440px,100%);margin:0 auto}
 .stories .st-bars{display:flex;gap:4px;margin-bottom:10px}
-.stories .st-bars i{flex:1;height:4px;border-radius:2px;background:#C9D6CE}
-.stories .st-bars i.on{background:var(--ink)}
+.stories .st-bars i{flex:1;height:4px;border-radius:2px;background:#C9D6CE;overflow:hidden}
+.stories .st-bars b{display:block;height:100%;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .1s linear}
 .stories .st-slide{aspect-ratio:4/5;border-radius:18px;overflow:hidden;position:relative;color:#fff;padding:26px 24px 22px;display:flex;flex-direction:column;cursor:pointer;user-select:none;background:var(--bg)}
 .stories .st-slide.st-light{color:var(--ink)}
 .stories .st-slide h1{font-family:Unbounded,sans-serif;font-weight:900;font-stretch:100%;font-size:clamp(26px,8.4vw,36px);line-height:1.04;letter-spacing:-.02em;margin:0;color:inherit}
@@ -26,8 +26,8 @@
 .stories .st-pitch{width:72%;margin:14px auto 0;display:block}
 .stories .st-pitch text{font-family:Archivo,sans-serif}
 .stories .st-zone{position:absolute;top:0;bottom:0;width:30%;left:0}
-.stories .st-nav{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
-.stories .st-nav button{font:700 15px Archivo,sans-serif;color:var(--ink);background:#fff;border:1px solid #C9D6CE;border-radius:8px;padding:8px 14px;cursor:pointer}
-.stories .st-nav button:disabled{opacity:.4;cursor:default}
-.stories .st-nav button:focus-visible{outline:3px solid var(--pitch);outline-offset:2px}
-.stories .st-nav span{font-size:14px;color:var(--muted);font-weight:600}
+.stories .st-slot{touch-action:pan-y;border-radius:18px}
+.stories .st-slot:focus-visible{outline:3px solid var(--pitch);outline-offset:3px}
+.stories .st-slide{transition:transform .2s ease-out}
+.stories .st-hint{display:flex;justify-content:space-between;margin:10px 2px 0;font-size:14px;color:var(--muted);font-weight:600}
+@media (prefers-reduced-motion:reduce){.stories .st-slide{transition:none}}

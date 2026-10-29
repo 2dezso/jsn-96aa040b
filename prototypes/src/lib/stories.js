@@ -1,4 +1,4 @@
-// Gameweek stories: shared by the standalone page and the app overlay.
+// Gameweek stories: shared by the standalone page and the This week tab.
 // JSNStories.build(D) returns the slides; JSNStories.mount(root, D, opts) renders a player into root.
 window.JSNStories = (() => {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -54,21 +54,39 @@ window.JSNStories = (() => {
     const S = build(D), GW = D.meta.latest_gw;
     let i = Math.min(S.length - 1, Math.max(0, (opts.start || 1) - 1));
     root.classList.add('stories');
-    root.innerHTML = `<div class="st-stage"><div class="st-bars" aria-hidden="true">${S.map(() => '<i></i>').join('')}</div><div class="st-slot" aria-live="polite"></div><div class="st-nav"><button class="st-prev">Previous</button><span class="st-count"></span><button class="st-next">Next</button></div></div>`;
-    const q = s => root.querySelector(s);
+    // move between slides by swiping (touch or mouse drag), tapping a side, or the arrow keys
+    root.innerHTML = `<div class="st-stage"><div class="st-bars" aria-hidden="true">${S.map(() => '<i><b></b></i>').join('')}</div><div class="st-slot" tabindex="0" aria-live="polite" aria-label="Gameweek stories. Use the left and right arrow keys to move between slides."></div><p class="st-hint"><span class="st-count"></span><span>Swipe for more</span></p></div>`;
+    const q = s => root.querySelector(s), slot = q('.st-slot'), fills = [...root.querySelectorAll('.st-bars b')];
     function render() {
       const s = S[i];
-      q('.st-slot').innerHTML = `<div class="st-slide${s.light ? ' st-light' : ''}" style="--bg:${s.bg}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${S.length}">${s.inner}<div class="st-foot"><b>JSN</b><span>Jim Sport News, gameweek ${GW}</span></div><span class="st-zone"></span></div>`;
-      root.querySelectorAll('.st-bars i').forEach((b, k) => b.classList.toggle('on', k <= i));
+      slot.innerHTML = `<div class="st-slide${s.light ? ' st-light' : ''}" style="--bg:${s.bg}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${S.length}">${s.inner}<div class="st-foot"><b>JSN</b><span>Jim Sport News, gameweek ${GW}</span></div><span class="st-zone"></span></div>`;
+      fills.forEach((b, k) => { b.style.transform = `scaleX(${k <= i ? 1 : 0})`; });
       q('.st-count').textContent = `${i + 1} of ${S.length}`;
-      q('.st-prev').disabled = i === 0;
-      q('.st-next').disabled = i === S.length - 1;
       if (opts.onChange) opts.onChange(i + 1);
     }
-    const go = d => { i = Math.min(S.length - 1, Math.max(0, i + d)); render(); };
-    q('.st-slot').addEventListener('click', e => go(e.target.closest('.st-zone') ? -1 : 1));
-    q('.st-prev').addEventListener('click', () => go(-1));
-    q('.st-next').addEventListener('click', () => go(1));
+    const go = d => { const n = Math.min(S.length - 1, Math.max(0, i + d)); if (n !== i) { i = n; render(); } };
+    // the slide follows the finger; past 50px sideways it changes, otherwise it springs back
+    let x0 = null, y0 = 0, dx = 0, swiped = false;
+    slot.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; dx = 0; swiped = false; });
+    slot.addEventListener('pointermove', e => {
+      if (x0 === null) return;
+      dx = e.clientX - x0;
+      if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - y0)) {
+        swiped = true;
+        const edge = (dx > 0 && i === 0) || (dx < 0 && i === S.length - 1);
+        slot.firstChild.style.transform = `translateX(${edge ? dx / 4 : dx}px)`;
+      }
+    });
+    const end = () => {
+      if (x0 === null) return;
+      x0 = null;
+      if (swiped && Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+      else if (slot.firstChild) slot.firstChild.style.transform = '';
+    };
+    slot.addEventListener('pointerup', end);
+    slot.addEventListener('pointercancel', end);
+    slot.addEventListener('pointerleave', end);
+    slot.addEventListener('click', e => { if (!swiped) go(e.target.closest('.st-zone') ? -1 : 1); });
     document.addEventListener('keydown', e => {
       if (opts.isActive && !opts.isActive()) return;
       if (e.key === 'ArrowRight') go(1);

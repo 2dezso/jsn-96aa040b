@@ -105,6 +105,57 @@ h2{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:-.015em;margi
 .vs>div{border-top:4px solid;padding-top:8px}
 .vs .big{font-weight:900;font-stretch:125%;font-size:40px;line-height:1}
 .vs p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+/* new: sliding doors, night shift, trendsetters */
+.new{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;background:#FFD84D;color:var(--ink);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:3px}
+.tabs .new{margin-left:auto;margin-right:6px;vertical-align:0}
+.sec{margin-top:44px;padding-top:22px;border-top:2px solid var(--ink)}
+.sec>h1{font-size:clamp(24px,4vw,32px)}
+.db{display:grid;grid-template-columns:56px 1fr 70px;gap:10px;align-items:center;margin:10px 0;font-size:14px}
+.db b{font-weight:700;display:flex;align-items:center;gap:6px}
+.db .ln{position:relative;height:22px}
+.db .ln::before{content:"";position:absolute;left:0;right:0;top:10px;height:2px;background:var(--wash)}
+.db .ln i{position:absolute;top:10px;height:2px}
+.db .ln .g{position:absolute;top:4px;width:14px;height:14px;border-radius:50%;border:2px dashed var(--muted);background:var(--paper);margin-left:-7px}
+.db .ln .a{position:absolute;top:4px;width:14px;height:14px;border-radius:50%;margin-left:-7px}
+.db .gap{text-align:right;font-weight:800}
+.key{display:flex;gap:18px;font-size:13px;color:var(--muted);margin:2px 0 8px}
+.key span{display:flex;align-items:center;gap:6px}
+.key .g{width:12px;height:12px;border-radius:50%;border:2px dashed var(--muted)}
+.key .a{width:12px;height:12px;border-radius:50%;background:var(--ink)}
+.spark{width:100%;height:60px;display:block;margin:8px 0 4px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.facts div{background:var(--wash);border-radius:8px;padding:6px 8px}
+.facts small{display:block;font-size:12px;color:var(--muted)}
+.facts b{font-weight:900;font-stretch:125%;font-size:20px}
+.xi{font-size:13px;color:var(--muted);margin:8px 0 0}
+.aw3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
+.aw3 .box p{margin:0}
+.aw3 .k{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.aw3 .big{font-weight:900;font-stretch:125%;font-size:30px;line-height:1.05;margin:4px 0 2px}
+.aw3 .d{font-size:14px;color:var(--muted)}
+.clock{display:grid;grid-template-columns:56px 1fr;gap:6px 10px;align-items:center;font-size:14px}
+.clock b{font-weight:700;display:flex;align-items:center;gap:6px}
+.clock .tr{position:relative;height:26px;border-radius:4px;background:linear-gradient(90deg,#20304A 0 25%,var(--wash) 25% 91.6%,#20304A 91.6%)}
+.clock .tr i{position:absolute;top:50%;border-radius:50%;transform:translate(-50%,-50%);border:2px solid #fff;opacity:.92}
+.clock .ax{grid-column:2;position:relative;height:16px;font-size:12px;color:var(--muted)}
+.clock .ax span{position:absolute;transform:translateX(-50%)}
+.lead{width:100%;border-collapse:collapse;font-size:15px}
+.lead th{text-align:right;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:6px;border-bottom:1px solid var(--ink)}
+.lead th:first-child,.lead td:first-child{text-align:left}
+.lead td{padding:10px 6px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+.lead tr:last-child td{border-bottom:0}
+.lead .nm{display:flex;align-items:center;gap:7px;font-weight:700}
+.tl{display:grid;grid-template-columns:120px 1fr;gap:4px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.tl:first-of-type{border-top:0}
+.tl h3{margin:0;font-size:16px;font-weight:800}
+.tl .wk{position:relative;height:30px}
+.tl .wk::before{content:"";position:absolute;left:0;right:0;top:14px;height:2px;background:var(--wash)}
+.tl .wk span{position:absolute;top:3px;transform:translateX(-50%);color:#fff;font-size:12px;font-weight:800;border-radius:5px;padding:3px 6px;white-space:nowrap}
+.tl .wk span.f{box-shadow:0 0 0 2px var(--ink)}
+.tl p{grid-column:2;margin:0;font-size:14px;color:var(--muted)}
+.tl .gw{grid-column:2;position:relative;height:14px;font-size:11px;color:var(--muted)}
+.tl .gw span{position:absolute;transform:translateX(-50%)}
+@media (max-width:560px){.tl{grid-template-columns:1fr}.tl p,.tl .gw{grid-column:1}}
 /* transfer news */
 .deals{grid-template-columns:1fr 1fr}@media (max-width:560px){.deals{grid-template-columns:1fr}}
 .deal{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline}
@@ -213,13 +264,77 @@ const transfers = `<h1>${mkTop.manager} owns the market. ${mkBot.manager} is pay
 <div class="rec" role="img" aria-label="${m.won} of ${m.moves.length} moves paid off">${m.moves.map(t => `<i title="GW${t.gw}: ${esc(t.in)} for ${esc(t.out)}, ${sign(t.net)}" style="background:${t.net > 0 ? 'var(--pitch)' : t.net < 0 ? 'var(--out)' : 'var(--line)'}"></i>`).join('')}</div>
 <ul class="mini">${m.moves.length ? `<li><span>Best: ${esc(m.best.in)} for ${esc(m.best.out)}, GW${m.best.gw}</span><b class="in">${sign(m.best.net)}</b></li><li><span>Worst: ${esc(m.worst.in)} for ${esc(m.worst.out)}, GW${m.worst.gw}</span><b class="out">${sign(m.worst.net)}</b></li>` : '<li>No transfers yet</li>'}</ul></div>`).join('')}</div>`;
 
+
+// ---- NEW: Sliding doors. Your gameweek 1 team, never touched: same XI, bench, captain, no chips, no hits ----
+const SD = NAMES.map(n => ({manager: n, ...D.sliding[n], value: D.sliding[n].actual - D.sliding[n].ghost})).sort((a, b) => a.value - b.value);
+const beaten = SD.filter(x => x.value < 0), closest = SD[0], furthest = SD[SD.length - 1];
+const sdMin = Math.min(...SD.map(x => Math.min(x.ghost, x.actual))) - 20, sdMax = Math.max(...SD.map(x => Math.max(x.ghost, x.actual))) + 10;
+const sx = v => (v - sdMin) / (sdMax - sdMin) * 100;
+// running lead over the ghost, week by week
+const spark = x => { let c = 0; const pts = x.weeks.map(w => (c += w.actual - w.ghost)); const m = Math.max(10, ...pts.map(Math.abs));
+  const X = i => 4 + i / (pts.length - 1) * 292, Y = v => 30 - v / m * 24;
+  return `<svg class="spark" viewBox="0 0 300 60" preserveAspectRatio="none" role="img" aria-label="Lead over the ghost after each gameweek: ${pts.join(', ')}"><line x1="0" x2="300" y1="30" y2="30" stroke="var(--line)" stroke-dasharray="3 3"/><polyline fill="none" stroke="${col(x.manager)}" stroke-width="2.5" points="${pts.map((v, i) => `${X(i)},${Y(v)}`).join(' ')}"/>${pts.map((v, i) => `<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="${x.weeks[i].ghost > x.weeks[i].actual ? 'var(--out)' : col(x.manager)}"/>`).join('')}</svg>`; };
+const doors = `<h1>${beaten.length ? `${list(beaten.map(x => x.manager))} would be better off never touching ${beaten.length > 1 ? 'their teams' : 'their team'}.` : `Every transfer has paid. Just. ${closest.manager}'s gameweek 1 team is only ${closest.value} behind.`}</h1>
+<p class="sub">The ghost: your gameweek 1 squad, never touched again. Same XI, same bench order, same captain, auto-subs as normal, no chips, no hits. This is what you'd have if you'd set and forgotten.</p>
+<div class="grid"><div class="box"><h2>You vs your ghost, season so far</h2><div class="key"><span><i class="g"></i>Ghost</span><span><i class="a"></i>You</span></div>
+${SD.map(x => { const a = sx(x.actual), g = sx(x.ghost); return `<div class="db"><b>${sw(x.manager)}${x.manager}</b><div class="ln"><i style="left:${Math.min(a, g)}%;width:${Math.abs(a - g)}%;background:${col(x.manager)}"></i><span class="g" style="left:${g}%" title="Ghost ${x.ghost}"></span><span class="a" style="left:${a}%;background:${col(x.manager)}" title="You ${x.actual}"></span></div><span class="gap" style="color:${x.value < 0 ? 'var(--out)' : 'var(--pitch)'}">${sign(x.value)}</span></div>`; }).join('')}
+<p class="sub" style="font-size:14px">The number is what tinkering has earned you over the ghost. ${furthest.manager} has gained the most: ${furthest.actual} against a ghost on ${furthest.ghost}.</p></div></div>
+<div class="grid g2">${SD.map(x => `<div class="box"><h2 style="display:flex;align-items:center;gap:8px">${sw(x.manager)}${x.manager}<span style="margin-left:auto;font-size:22px;color:${x.value < 0 ? 'var(--out)' : 'var(--pitch)'}">${sign(x.value)}</span></h2>
+${spark(x)}<p class="xi" style="margin-top:0">Your lead over the ghost after each gameweek. Red dots: weeks the ghost won.</p>
+<div class="facts"><div><small>Ghost won</small><b>${x.ghost_wins} of ${x.weeks.length}</b></div><div><small>Ghost captain</small><b style="font-size:16px">${esc(x.captain)}</b></div></div>
+<p class="xi">Ghost XI: ${x.xi.map(esc).join(', ')}</p></div>`).join('')}</div>`;
+
+// ---- NEW: the night shift. When transfers happen, in UK time ----
+const UK = new Intl.DateTimeFormat('en-GB', {timeZone: 'Europe/London', hour: 'numeric', minute: '2-digit', hourCycle: 'h23'});
+const UKday = new Intl.DateTimeFormat('en-GB', {timeZone: 'Europe/London', weekday: 'short', day: 'numeric', month: 'short'});
+const clockOf = iso => { const [h, m] = UK.format(new Date(iso)).split(':').map(Number); return h + m / 60; };
+const ampm = iso => { const h = clockOf(iso), hh = Math.floor(h), mm = Math.round((h - hh) * 60); return `${hh % 12 || 12}:${String(mm).padStart(2, '0')}${hh < 12 ? 'am' : 'pm'}`; };
+const SS = NAMES.flatMap(n => D.sessions[n].map(x => ({...x, m: n, h: clockOf(x.time)})));
+// lateness: hours past 10pm, so 1am beats 11pm and 4am beats both; daytime doesn't count
+const late = x => (x.h >= 22 ? x.h - 22 : x.h < 6 ? x.h + 2 : -1);
+const owl = SS.reduce((a, x) => (late(x) > late(a) ? x : a));
+const toDeadline = x => (new Date(D.deadlines[x.gw]) - new Date(x.time)) / 60000;
+const dash = SS.reduce((a, x) => (toDeadline(x) < toDeadline(a) ? x : a));
+const perGw = {}; SS.forEach(x => { const k = x.m + x.gw; (perGw[k] ||= {m: x.m, gw: x.gw, n: 0, chip: x.chip}).n++; });
+const tink = Object.values(perGw).reduce((a, x) => (x.n > a.n ? x : a));
+const owls = NAMES.map(n => ({n, c: SS.filter(x => x.m === n && late(x) >= 1).length})).sort((a, b) => b.c - a.c);
+const mins = v => v < 60 ? `${Math.round(v)} minutes` : v < 180 ? `${Math.floor(v / 60)} hour${v >= 120 ? 's' : ''} ${Math.round(v % 60)} minutes` : `${Math.round(v / 60)} hours`;
+const tx = h => (h / 24 * 100).toFixed(2);
+const night = `<div class="sec"><h1>The night shift<span class="new">NEW</span></h1><p class="sub">When you make your moves, in UK time. Transfers made within 20 minutes of each other count as one sitting.</p>
+<div class="aw3"><div class="box"><p class="k">Night owl</p><p class="big" style="color:${col(owl.m)}">${owl.m}, ${ampm(owl.time)}</p><p class="d">${UKday.format(new Date(owl.time))}: ${owl.n > 1 ? `${owl.n} moves, starting with ` : ''}${esc(owl.in)} in for ${esc(owl.out)}${owl.chip ? ` (${owl.chip === 'freehit' ? 'Free Hit' : owl.chip === 'wildcard' ? 'wildcard' : owl.chip})` : ''}.</p></div>
+<div class="box"><p class="k">Deadline dash</p><p class="big" style="color:${col(dash.m)}">${dash.m}, ${mins(toDeadline(dash))} out</p><p class="d">${esc(dash.in)} in for ${esc(dash.out)}, ${mins(toDeadline(dash))} before the gameweek ${dash.gw} deadline.</p></div>
+<div class="box"><p class="k">The tinkerer</p><p class="big" style="color:${col(tink.m)}">${tink.m}, ${tink.n} sittings</p><p class="d">Went back to ${tink.chip === 'wildcard' ? 'the' : 'his'} gameweek ${tink.gw} ${tink.chip === 'wildcard' ? 'wildcard' : 'team'} ${tink.n} separate times before the deadline.</p></div></div>
+<div class="grid"><div class="box"><h2>Every sitting, by time of day</h2><p class="sub" style="margin:0 0 12px;font-size:14px">Dark bands are 10pm to 6am. Bigger dots, more moves in one go.</p><div class="clock">
+${NAMES.map(n => `<b>${sw(n)}${n}</b><div class="tr">${D.sessions[n].map(x => { const r = Math.min(22, 8 + Math.sqrt(x.n) * 3); return `<i title="${ampm(x.time)} ${UKday.format(new Date(x.time))}, ${x.n} move${x.n > 1 ? 's' : ''}" style="left:${tx(clockOf(x.time))}%;width:${r}px;height:${r}px;background:${col(n)}"></i>`; }).join('')}</div>`).join('')}
+<div class="ax">${[[0, 'midnight'], [6, '6am'], [12, 'noon'], [18, '6pm'], [24, 'midnight']].map(([h, l]) => `<span style="left:${tx(h)}%">${l}</span>`).join('')}</div></div>
+<p class="sub" style="font-size:14px">${owls[0].c ? `${owls[0].n} has made ${owls[0].c} late-night sitting${owls[0].c > 1 ? 's' : ''} after 11pm.` : 'Nobody has made a move after 11pm. Yet.'}</p></div></div></div>`;
+
+// ---- NEW: trendsetters and copycats. Who brought each player in first ----
+const TR = D.trends;
+const leaders = t => [t.first, ...(t.day_one ? t.same_week : [])];
+const TS = NAMES.map(n => ({n, led: TR.filter(t => leaders(t).includes(n)).reduce((a, t) => a + t.followers.length, 0),
+  copied: TR.reduce((a, t) => a + t.followers.filter(f => f.manager === n).length, 0),
+  missed: TR.reduce((a, t) => a + t.followers.filter(f => f.manager === n).reduce((b, f) => b + f.head_start, 0), 0)}))
+  .sort((a, b) => b.led - b.copied - (a.led - a.copied));
+const setter = TS[0], copier = TS.reduce((a, x) => (x.copied - x.led > a.copied - a.led ? x : a));
+const GWS = D.meta.latest_gw, gx = g => (4 + (g - 1) / Math.max(1, GWS - 1) * 92).toFixed(1);
+const trendRow = t => { const f = t.followers, slow = f.reduce((a, x) => (x.head_start > a.head_start ? x : a));
+  // everyone on one gameweek line: leaders outlined; managers arriving the same week stack sideways
+  const chips = [...leaders(t).map(n => ({manager: n, gw: t.first_gw, lead: true})), ...f];
+  return `<div class="tl"><h3>${esc(t.player)}</h3><div class="wk">${chips.map((x, k) => `<span class="${x.lead ? 'f' : ''}" style="left:${gx(x.gw)}%;background:${col(x.manager)};transform:translateX(calc(-50% + ${chips.slice(0, k).filter(y => y.gw === x.gw).length * 40}px))">${x.manager}</span>`).join('')}</div>
+<p>${t.day_one ? `${list(leaders(t))} had him from day one.` : `${t.first} got there first, gameweek ${t.first_gw}.`} ${slow.manager} arrived in gameweek ${slow.gw} and missed ${slow.head_start} points getting there.</p></div>`; };
+const gwAxis = `<div class="tl" style="padding:0;border:0"><span></span><div class="gw">${Array.from({length: GWS}, (_, i) => `<span style="left:${gx(i + 1)}%">GW${i + 1}</span>`).join('')}</div></div>`;
+const trend = `<div class="sec"><h1>${setter.n} sets the trends. ${copier.n} follows them.<span class="new">NEW</span></h1><p class="sub">Who brought a player into their squad first, and who copied later. A copy counts when someone else already had the player. Missed points: what the player scored while you were catching up.</p>
+<div class="grid"><div class="box"><table class="lead"><thead><tr><th>Manager</th><th>Followed by others</th><th>Copied someone</th><th>Points missed copying</th></tr></thead><tbody>${TS.map(x => `<tr><td><span class="nm">${sw(x.n)}${x.n}</span></td><td class="num" style="font-weight:800">${x.led}</td><td>${x.copied}</td><td style="color:${x.missed ? 'var(--out)' : 'var(--muted)'}">${x.missed ? '−' + x.missed : '–'}</td></tr>`).join('')}</tbody></table></div></div>
+<div class="grid"><div class="box"><h2>The bandwagons</h2><p class="sub" style="margin:0 0 6px;font-size:14px">The players most of you ended up on, and when you got there. Outlined: first.</p>${TR.slice(0, 6).map(trendRow).join('')}${gwAxis}</div></div></div>`;
+
 // ---- Team news ----
 const news = `<h1>Team news</h1><p class="sub">Things that look wrong in your squads before gameweek ${D.meta.next_gw}.</p><div class="grid">${NEWS.map(g => `<div class="flag ${g.severity}"><span class="st">${g.severity === 'out' ? 'Out' : 'Doubtful'}</span><h2>${esc(g.player)}</h2><p class="sub" style="margin-top:0">${esc(g.text)}</p><div class="chips">${g.who.map(chip).join('')}</div></div>`).join('')}</div>`;
 
 // ---- Versus ----
 const versus = `<h1>Head to head</h1><p class="sub">Pick two. Gameweeks won, how alike your teams are, and the players who made the difference.</p><div class="pick"><select id="sa" aria-label="First manager">${NAMES.map(n => `<option${n === 'Jim' ? ' selected' : ''}>${n}</option>`).join('')}</select><b>v</b><select id="sb" aria-label="Second manager">${NAMES.map(n => `<option${n === 'Dez' ? ' selected' : ''}>${n}</option>`).join('')}</select></div><div class="grid"><div class="box" id="vsout" aria-live="polite"></div></div>`;
 
-const TABS = [['week', 'This week', thisWeek], ['table', 'Table', table], ['transfers', 'Transfer news', transfers], ['awards', 'Awards', awards], ['luck', 'Luck', luck], ['news', 'Team news', news, NEWS.length], ['versus', 'Versus', versus]];
+const TABS = [['week', 'This week', thisWeek], ['table', 'Table', table], ['transfers', 'Transfer news', transfers + night + trend], ['doors', 'Sliding doors<span class="new">NEW</span>', doors], ['awards', 'Awards', awards], ['luck', 'Luck', luck], ['news', 'Team news', news, NEWS.length], ['versus', 'Versus', versus]];
 $('#tabs').innerHTML = TABS.map(([id, label, , n]) => `<button role="tab" id="t-${id}" aria-controls="p-${id}" aria-selected="false">${label}${n ? `<span class="n">${n}</span>` : ''}</button>`).join('');
 $('#main').innerHTML = TABS.map(([id, , html]) => `<section class="panel" role="tabpanel" id="p-${id}" aria-labelledby="t-${id}" hidden>${html}</section>`).join('') + `<p class="foot">Updated ${D.meta.updated.slice(0, 10)}. ${esc(D.meta.caveat_ownership)}</p>`;
 $('#legend').innerHTML = NAMES.map(chip).join('');
